@@ -46,7 +46,7 @@ create table game (
     description text,
     game_options text array default '{}',
     base_map text references map_variant (id),
-    nonstandard boolean default false,
+    non_standard boolean default false,
     admin_user text references player (username)
 );
 create index game_finished_idx on game (finished);
