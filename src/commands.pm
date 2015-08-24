@@ -49,6 +49,15 @@ sub command_adjust_resources {
                 }
                 $faction->{LOSE_CULT} -= $loss;
                 $checked = 1;
+            } elsif (!$game{options}{'loose-cult-loss'}) {
+                my $old_value = $faction->{$type};
+                my $new_value = $old_value + $delta;
+                # Only allow the kind of adjustment needed to work around the 
+                # TW5 issue.
+                if ($old_value == 10 or
+                    ($new_value < 7)) {
+                    die "Can't voluntarily lose cult steps\n";
+                }
             }
         } elsif ($faction->{CULT} > $delta and
                  $faction->{CULTS_ON_SAME_TRACK}) {
@@ -789,9 +798,11 @@ sub command_pass {
         adjust_resource $faction, $discard, -1;
     }
 
-    my $income = faction_income $faction;
-    for my $subincome (@{$income->{ordered}}) {
-        warn_if_cant_gain $faction, $subincome, 'income';
+    if ($game{round} != 6) {
+        my $income = faction_income $faction;
+        for my $subincome (@{$income->{ordered}}) {
+            warn_if_cant_gain $faction, $subincome, 'income';
+        }
     }
 }
 
@@ -803,7 +814,14 @@ sub command_action {
         die "No $action space available\n"
     }    
     my $name = $action;
-    if (!exists $actions{$name}) {
+    my $ar;
+
+    if (exists $faction->{actions} and
+        exists $faction->{actions}{$name}) {
+        $ar = $faction->{actions}{$name};
+    } elsif (exists $actions{$name}) {
+        $ar = $actions{$name};
+    } else {
         die "Unknown action $name\n";
     }
 
@@ -826,17 +844,17 @@ sub command_action {
     if (exists $faction->{action} and
         exists $faction->{action}{$name}{subaction}) {
         %subaction = %{$faction->{action}{$name}{subaction}};
-    } elsif (exists $actions{$name}{subaction}) {
-        %subaction = %{$actions{$name}{subaction}};
+    } elsif (exists $ar->{subaction}) {
+        %subaction = %{$ar->{subaction}};
     }
 
     $game{acting}->require_subaction($faction, 'action', \%subaction);
 
-    pay $faction, $actions{$name}{cost}, ($faction->{discount} and $faction->{discount}{$name});
-    warn_if_cant_gain $faction, $actions{$name}{gain}, "action $action";
-    gain $faction, $actions{$name}{gain}, $name;
+    pay $faction, $ar->{cost}, ($faction->{discount} and $faction->{discount}{$name});
+    warn_if_cant_gain $faction, $ar->{gain}, "action $action";
+    gain $faction, $ar->{gain}, $name;
 
-    $map{$action}{blocked} = 1 unless $actions{$name}{dont_block};
+    $map{$action}{blocked} = 1 unless $ar->{dont_block};
 
     $game{events}->faction_event($faction, "action:$name", 1);
 }
@@ -949,16 +967,28 @@ sub command_finish {
 }
 
 sub command_income {
-    my $faction = shift;
+    my ($faction, $type) = @_;
     if ($faction) {
-        take_income_for_faction $faction;
+        my $mask;
+        if (!defined $type or $type eq 'all') {
+            $mask = 15;
+        } elsif ($type eq 'cult') {
+            $mask = 1;
+        } else {
+            $mask = 14;
+        }
+        take_income_for_faction $faction, $mask;
     } else {
         my @order = $game{acting}->factions_in_turn_order();
         if (!$game{ledger}->trailing_comment()) {
             $game{ledger}->add_comment(sprintf "Round %d income", $game{round} + 1);
         }
         for (@order) {
-            handle_row_internal $_->{name}, "income_for_faction";
+            if ($type) {
+                handle_row_internal $_->{name}, "${type}_income_for_faction";
+            } else {
+                handle_row_internal $_->{name}, "income_for_faction";
+            }
         }
     }
 }
@@ -1100,7 +1130,7 @@ sub full_action_required {
 sub finalize_setup {
     maybe_setup_pool;
 
-    for my $type (qw(ice volcano variable variable_v2 variable_v3)) {
+    for my $type (qw(ice volcano variable variable_v2 variable_v3 variable_v4)) {
         if ($game{options}{"fire-and-ice-factions/$type"}) {
             add_faction_variant "final_$type";
         }
@@ -1238,8 +1268,9 @@ sub command {
         for my $faction ($game{acting}->factions_in_order()) {
             command_income $faction if !$faction->{income_taken};
         }
-    } elsif ($command =~ /^income_for_faction$/i) {
-        command_income $assert_faction->();
+    } elsif ($command =~ /^(?:(cult|all|other)_)?income_for_faction$/i) {
+        my $type = $1 // 'all';
+        command_income $assert_faction->(), $type;
     } elsif ($command =~ /^advance (ship|dig)/i) {
         command_advance $assert_faction->(), lc $1;
     } elsif ($command =~ /^score (.*)/i) {
@@ -1281,6 +1312,7 @@ sub command {
             fire-and-ice-factions/variable
             fire-and-ice-factions/variable_v2
             fire-and-ice-factions/variable_v3
+            fire-and-ice-factions/variable_v4
             fire-and-ice-factions/volcano
             email-notify
             loose-adjust-resource
@@ -1341,7 +1373,7 @@ sub command {
     } elsif ($command =~ /^pick-color (\w+)$/i) {
         my $faction = $assert_faction->();
         if (!$faction->{PICK_COLOR}) {
-            die "$faction->{name} is not allowed to pick a color\n";
+            die "$faction->{name} are not allowed to pick a color\n";
         }
         my ($wanted_color) = assert_color alias_color $1;
         for my $other ($game{acting}->factions_in_order()) {
@@ -1387,10 +1419,9 @@ sub command {
     } elsif ($command =~ /^unlock-terrain ([-\w]+)$/i) {
         my $faction = $assert_faction->();
         if (!$faction->{UNLOCK_TERRAIN}) {
-            die "$faction->{name} is not allowed to unlock a new terrain\n";
+            die "$faction->{name} are not allowed to unlock a new terrain\n";
         }
         my ($wanted_color) = $1;
-
         my $special_unlock = ($wanted_color =~ /^gain-.*$/);
 
         if (!$special_unlock) {
@@ -1402,12 +1433,19 @@ sub command {
             die "$faction->{name} can't unlock $wanted_color (already unlocked?)\n"
         }
 
-        my $effect = $faction->{locked_terrain}{$wanted_color};
+        my $effect;
+        if ($special_unlock) {
+            $effect = $faction->{locked_terrain}{$wanted_color}{''};
+        } else {
+            my $color_type = color_home_status $wanted_color;
+            $effect = $faction->{locked_terrain}{$wanted_color}{$color_type};
+        }
 
         {
             my $save = $faction->{special};
             delete $faction->{special};
             gain $faction, $effect->{gain};
+            pay $faction, $effect->{cost};
             $faction->{special} = $save;
         }
 
@@ -1417,7 +1455,7 @@ sub command {
             delete $faction->{locked_terrain}{$wanted_color};
         }
 
-        # XXX really ugly hack to stop unlocking from triggering once 
+        # XXX really ugly hack to stop unlocking from triggering
         # for riverwalkers once everything has been unlocked.
         if (0 == grep { $_ !~ $special_unlock } keys %{$faction->{locked_terrain}}) {
             delete $faction->{special}{P};
@@ -1454,6 +1492,7 @@ sub command {
             username => $player->{username},
             player => $player->{displayname},
             dropped => 1,
+            income_taken => 0,
             name => "nofaction$1",
             display => 'No Faction',
             dummy => 1,
