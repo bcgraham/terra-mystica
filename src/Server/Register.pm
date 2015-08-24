@@ -77,7 +77,7 @@ method request_registration($q, $dbh) {
             hashed_password => $hashed_password
         };
         my $token = insert_to_validate $dbh, $data;
-        $self->register($dbh, $user, $email, $hashed_password);
+        $self->register($dbh, $username, $email, $hashed_password);
     }
 
     $self->output_json({ error => [@error] });
