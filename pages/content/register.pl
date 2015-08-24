@@ -32,7 +32,7 @@ __DATA__
     </div>
     <div id="validate" style="display: none">
       <p style="color: green">
-        Request sent.
+        Registered. You can now log in.
       <p>
       Your account will be created as soon as we can validate your
       email address. You should have received an email with the
