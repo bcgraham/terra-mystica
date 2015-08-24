@@ -9,7 +9,6 @@ use Method::Signatures::Simple;
 extends 'Server::Server';
 
 use Crypt::Eksblowfish::Bcrypt qw(bcrypt en_base64);
-use Net::SMTP;
 
 use Bytes::Random::Secure qw(random_bytes);
 use DB::Connection;
