@@ -16,7 +16,7 @@ my $domain = "http://terra.snellman.net";
 sub notify_by_email {
     my ($game, $email, $subject, $body) = @_;
 
-    return if !$body or !$subject or !$email;
+    return #if !$body or !$subject or !$email;
 
     my $smtp = Net::SMTP->new('localhost', ( Debug => 0 ));
 

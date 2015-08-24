@@ -156,4 +156,3 @@ create table game_options (
     deadline_hours integer default 168,
     primary key (game)
 );
-
