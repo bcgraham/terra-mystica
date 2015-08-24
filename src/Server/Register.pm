@@ -77,26 +77,7 @@ method request_registration($q, $dbh) {
             hashed_password => $hashed_password
         };
         my $token = insert_to_validate $dbh, $data;
-
-        my $url = sprintf "http://terra.snellman.net/app/register/validate/%s", $token;
-
-        my $smtp = Net::SMTP->new('localhost', ( Debug => 0 ));
-
-        $smtp->mail("www-data\@terra.snellman.net");
-        if (!$smtp->to($email)) {
-            push @error, "Invalid email address";
-        } else {
-            $smtp->data();
-            $smtp->datasend("To: $email\n");
-            $smtp->datasend("From: noreply+registration\@terra.snellman.net\n");
-            $smtp->datasend("Subject: Account activation for Terra Mystica\n");
-            $smtp->datasend("\n");
-            $smtp->datasend("To activate your account, use the following link:\n");
-            $smtp->datasend("  $url\n");
-            $smtp->dataend();
-        }
-
-        $smtp->quit;
+        $self->register($dbh, $user, $email, $hashed_password);
     }
 
     $self->output_json({ error => [@error] });
