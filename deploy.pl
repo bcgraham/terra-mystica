@@ -66,6 +66,17 @@ sub mangle_with_mode {
     rename $filename, $to;
 }
 
+sub deploy_docs {
+    system q|perl Markdown.pl usage.org > usage.html| and die "Error in org-mode export\n";
+
+    mangle_with_mode 0444, "usage.html", "$target/usage.html", sub {
+        my $contents = shift;
+        $contents =~ s{.*<body>}{}ms;
+        $contents =~ s{</body>.*}{}ms;
+        $contents;
+    };
+}
+
 sub deploy_cgi {
     mkdir "$target/lib";
     for my $f (qw(app.fcgi
@@ -220,6 +231,7 @@ sub deploy_data {
     }
 }
 
+deploy_docs;
 deploy_stc;
 deploy_cgi;
 deploy_data;
