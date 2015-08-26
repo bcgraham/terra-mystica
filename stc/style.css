@@ -8,6 +8,7 @@ body {
     font-size: 90%;
     height: 100%;
     margin: 0px;
+    background-color: #f0ead6;
 }
 
 body.gameview {

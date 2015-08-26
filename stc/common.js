@@ -36,7 +36,7 @@ function enableDescendants(parent) {
 
 function setTitle() {
     try {
-        var title = "TM";
+        var title = "PTM";
         if (TM.params) {
             if (TM.params.game) {
                 title += " - " + TM.params.game;
@@ -274,10 +274,10 @@ function renderSidebar(id) {
         insertLink("/stats/", "Statistics");
         insertLink("/ratings/", "Ratings");
         insertLink("/changes/", "Changes");
-        insertLink("/blog/", "Blog");
     });
 
     sidebarSection("Related", function (insertLink) {    
+        insertLink("http://terra.snellman.net/", "Original Website");
         insertLink("http://tmtour.org/", "Tournament");
         insertLink("http://lodev.org/tmai/", "TM AI");
     });

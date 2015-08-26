@@ -2,7 +2,7 @@
     layout => 'sidebar',
     scripts => [ "/stc/common.js",
                  "/stc/index.js" ],
-    title => 'Online Terra Mystica',
+    title => 'Personal Online Terra Mystica',
     content => read_then_close(*DATA)
 }
 

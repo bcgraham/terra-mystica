@@ -67,9 +67,7 @@ sub mangle_with_mode {
 }
 
 sub deploy_docs {
-    system q|perl Markdown.pl usage.org > usage.html| and die "Error in org-mode export\n";
-    #system q|emacs --batch --load org --file=usage.org --eval '(setq org-html-postamble nil)' --funcall org-html-export-to-html| and die "Error in org-mode export\n";
-
+    # usage.html created during docker image creation rather than here to save on image size
     mangle_with_mode 0444, "usage.html", "$target/usage.html", sub {
         my $contents = shift;
         $contents =~ s{.*<body>}{}ms;
@@ -204,7 +202,6 @@ sub deploy_data {
 
     for my $f (qw(pages/content/about.pl
                   pages/content/alias.pl
-                  pages/content/blog.pl
                   pages/content/changes.pl
                   pages/content/edit.pl
                   pages/content/game.pl

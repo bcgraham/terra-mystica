@@ -5,12 +5,6 @@
           "description": "<p>New playtest versions of Shapeshifters and Riverwalkers.<ul><li><b>Shapeshifters v4</b>: The cost the Shapeshifter SH power has been increased to 4 power / 4 power tokens, and using the power no longer generates any victory points. They also have to pay one VP for every power token they receive using their faction special ability.<li><b>Riverwalkers v4</b>: Riverwalkers have to pay 2 coins when they unlock a new terrain on their wheel (starting terrain is free), 3 coins if it is another player's home terrain.</ul>",
           "type": "change"
         },
-        { "date": "2015-07-22",
-          "title": "Detecting players using multiple accounts",
-          "description": "A blog post describing the system used for detecting people playing with multiple accounts.",
-          "type": "blog",
-          "link": "https://www.snellman.net/blog/archive/2015-07-22-cheater-detection-in-async-online-game/"
-        },
         { "date": "2015-07-02",
           "title": "Changes to list of open games",
           "description": "The open game list will now only display games that the player viewing the list can join.",
@@ -50,18 +44,6 @@
           "title": "Time tracking",
           "description": "The time spent waiting for each player is now tracked in roughly 10 minute intervals. It does not matter whether the game is waiting on a full action or for a power leeching decision, nor whether there are otherplayers who should be entering moves at the moment. As a rule of thumb, if the game currently shows up as green or red on your game list, the clock is ticking. The timing information is displayed under the 'info' tab of each game.",
           "type": "change"
-        },
-        { "date": "2014-12-08",
-          "title": "Command languages as game UIs",
-          "description": "A blog post looking at the implications (feature set, usability, social effects and development issues) of using a command language as the canonical data representation both for the backend and the UI of this site.",
-          "type": "blog",
-          "link": "https://www.snellman.net/blog/archive/2014-12-08-command-languages-as-game-ui/"
-        },
-        { "date": "2014-11-27",
-          "title": "A brief history of Online Terra Mystica",
-          "description": "A development history of the site.",
-          "type": "blog",
-          "link": "https://www.snellman.net/blog/archive/2014-11-27-history-of-online-terra-mystica/"
         },
         { "date": "2014-11-27",
           "title": "Fire & Ice turn order variant",
