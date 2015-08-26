@@ -8,9 +8,9 @@
 __DATA__
 <p>
   This is a list of larger user-visible changes, feature additions, etc.
-  For a tedious list including minor bugfixes and cosmetic changes, see the
+  For a tedious list including minor bugfixes and cosmetic changes, see this fork's
   <a href="https://github.com/bcgraham/terra-mystica/commits/master">version control logs</a>. 
-  This lightly-edited fork of <a href="https://www.snellman.net/">Juho Snellman's</a> 
+  This is a fork of <a href="https://www.snellman.net/">Juho Snellman's</a> 
   <a href="https://github.com/jsnell/terra-mystica/">open-source implementation</a>.
 </p>
 

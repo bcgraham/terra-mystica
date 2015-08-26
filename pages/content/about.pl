@@ -22,5 +22,12 @@ __DATA__
   The site was created
   by <a href="https://www.snellman.net/">Juho
   Snellman</a>. The source code is available on
-  <a href="https://github.com/jsnell/terra-mystica/">github</a>.
+  <a href="https://github.com/jsnell/terra-mystica/">github</a>. 
+</p>
+
+<p>
+  This fork is maintained 
+  by <a href="https://github.com/bcgraham/">Brian
+  Graham</a>. The source code is also available on 
+  <a href="https://github.com/bcgraham/terra-mystica/">github</a>. 
 </p>
