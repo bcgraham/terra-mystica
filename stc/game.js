@@ -366,7 +366,6 @@ function drawMap() {
     var canvas = $("map");
     canvas.height = canvasHeight();
     canvas.width = canvasWidth(); 
-    $H(state.map).
     if (canvas.getContext) {
         canvas.width = canvas.width;
         var ctx = canvas.getContext("2d");
