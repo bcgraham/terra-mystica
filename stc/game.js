@@ -364,6 +364,9 @@ function drawActiveHexBorder(hex) {
 
 function drawMap() {
     var canvas = $("map");
+    canvas.height = canvasHeight();
+    canvas.width = canvasWidth(); 
+    $H(state.map).
     if (canvas.getContext) {
         canvas.width = canvas.width;
         var ctx = canvas.getContext("2d");
@@ -3862,3 +3865,20 @@ function init(root) {
     }, 5*60*1000);
 }
 
+function canvasHeight() {
+    var height = maxRows() * hex_size; 
+    return Math.ceil(height/50)*50;
+}
+
+function canvasWidth() {
+    var width = maxCols() * hex_size; 
+    return Math.ceil(width/50)*50; 
+}
+
+function maxCols() {
+    return $H(state.map).inject(0, function(max, hex){ return max > hex.value.col ? max : hex.value.col; })+1; 
+}
+
+function maxRows() {
+    return $H(state.map).inject(0, function(max, hex){ return max > parseInt(hex.value.row) ? max : parseInt(hex.value.row); }); 
+}

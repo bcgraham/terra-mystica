@@ -22,7 +22,7 @@ sub setup_base_map {
     my $river = 0;
     for my $row (@row_labels[0..$row_count - 1]) {
         my $col = 1;
-        for my $ci (0..13) {
+        for my $ci (0..50) {
             my $color = $base_map->[$i++];
             last if $color eq 'E';
             if ($color ne 'x') {
