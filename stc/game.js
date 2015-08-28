@@ -3879,5 +3879,5 @@ function maxCols() {
 }
 
 function maxRows() {
-    return $H(state.map).inject(0, function(max, hex){ return max > parseInt((hex.value.row || 0)) ? max : parseInt((hex.value.row || 0)); })+1; 
+    return $H(state.map).inject(0, function(max, hex){ return max > parseInt((hex.value.row || 0)) ? max : parseInt((hex.value.row || 0)); }); 
 }
