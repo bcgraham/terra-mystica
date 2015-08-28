@@ -3875,9 +3875,9 @@ function canvasWidth() {
 }
 
 function maxCols() {
-    return $H(state.map).inject(0, function(max, hex){ return max > hex.value.col ? max : hex.value.col; })+1; 
+    return $H(state.map).inject(0, function(max, hex){ return max > (hex.value.col || 0) ? max : hex.value.col; })+1; 
 }
 
 function maxRows() {
-    return $H(state.map).inject(0, function(max, hex){ return max > parseInt(hex.value.row) ? max : parseInt(hex.value.row); })+1; 
+    return $H(state.map).inject(0, function(max, hex){ return max > parseInt((hex.value.row || 0)) ? max : parseInt((hex.value.row || 0)); })+1; 
 }
