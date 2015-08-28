@@ -3865,12 +3865,12 @@ function init(root) {
 }
 
 function canvasHeight() {
-    var height = maxRows() * hex_size; 
+    var height = maxRows() * hex_height; 
     return Math.ceil(height/50)*50;
 }
 
 function canvasWidth() {
-    var width = maxCols() * hex_size; 
+    var width = maxCols() * hex_width; 
     return Math.ceil(width/50)*50; 
 }
 
