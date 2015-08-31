@@ -2,6 +2,7 @@ create table player (
   username text primary key,
   password text,
   displayname text,
+  phone text,
   email_notify_turn boolean default true,
   email_notify_all_moves boolean default false,
   email_notify_chat boolean default true,

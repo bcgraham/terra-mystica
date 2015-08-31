@@ -20,6 +20,7 @@ use DB::IndexGame;
 use DB::SaveGame;
 use DB::Secret;
 use Email::Notify;
+use SMS::Notify;
 use Server::Security;
 use Server::Session;
 
@@ -150,27 +151,25 @@ method handle($q) {
     }
 
     if (!@{$res->{error}}) {
-        if ($res->{options}{'email-notify'}) {
-            my $factions = $dbh->selectall_arrayref(
-                "select game_role.faction as name, email.address as email, player.displayname from game_role left join email on email.player = game_role.faction_player left join player on player.username = game_role.faction_player where game = ? and email.is_primary",
-                { Slice => {} },
-                $read_id);
-            for my $faction (@{$factions}) {
-                my $eval_faction = $res->{factions}{$faction->{name}};
-                if ($eval_faction) {
-                    $faction->{recent_moves} = $eval_faction->{recent_moves};
-                    $faction->{VP} = $eval_faction->{VP};
-                }
+        my $factions = $dbh->selectall_arrayref(
+            "select game_role.faction as name, email.address as email, player.phone as phone, player.displayname from game_role left join email on email.player = game_role.faction_player left join player on player.username = game_role.faction_player where game = ? and email.is_primary",
+            { Slice => {} },
+            $read_id);
+        for my $faction (@{$factions}) {
+            my $eval_faction = $res->{factions}{$faction->{name}};
+            if ($eval_faction) {
+                $faction->{recent_moves} = $eval_faction->{recent_moves};
+                $faction->{VP} = $eval_faction->{VP};
             }
-            my $game = {
-                name => $read_id,
-                factions => { map { ($_->{name}, $_) } @{$factions} },
-                finished => $res->{finished},
-                options => $res->{options},
-                action_required => $res->{action_required},
-            };
-            notify_after_move $dbh, $write_id, $game, $faction_name, $append;
         }
+        my $game = {
+            name => $read_id,
+            factions => { map { ($_->{name}, $_) } @{$factions} },
+            finished => $res->{finished},
+            options => $res->{options},
+            action_required => $res->{action_required},
+        };
+        sms_after_move $dbh, $write_id, $game, $faction_name;
     }
 
     my $had_error = scalar @{$res->{error}};

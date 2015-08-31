@@ -12,6 +12,7 @@ __DATA__
       <table>
         <tr><td>Username<td><input name="username" id="username"></input>
         <tr><td>Email Address<td><input name="email" id="email"></input>
+        <tr><td>Phone Number<td><input name="phone" id="phone"></input>
         <tr><td>Password<td><input name="password1" type="password" id="password1"></input>
         <tr><td>Verify password<td><input name="password2" type="password" id="password2"></input>
         <tr><td><td><input type="button" value="Register" onclick="javascript:register()"></input>
@@ -28,6 +29,11 @@ __DATA__
       password resets, and for facilitating email play. The address
       might be shown to any users playing in the same match, but not
       to any outsiders.
+    </p>
+    <p>
+      A phone number is optional. If it is provided and the site administrator has 
+      enabled it, the number will receive an SMS message as a notification
+      when it's the player's turn. 
     </p>
     </div>
     <div id="validate" style="display: none">
