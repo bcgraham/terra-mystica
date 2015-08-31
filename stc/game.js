@@ -3875,9 +3875,24 @@ function canvasWidth() {
 }
 
 function maxCols() {
-    return $H(state.map).inject(0, function(max, hex){ return max > (hex.value.col || 0) ? max : hex.value.col; })+1; 
+    return $H(state.map).inject(0, function(max, hex){ return max > (adjustForEvenRow(hex) || 0) ? max : adjustForEvenRow(hex); })+1; 
 }
 
 function maxRows() {
-    return $H(state.map).inject(0, function(max, hex){ return max > parseInt((hex.value.row || 0)) ? max : parseInt((hex.value.row || 0)); }); 
+    var addRow = (hasRowA() ? 1 : 0);
+    return addRow + $H(state.map).inject(0, function(max, hex){ return max > parseInt((hex.value.row || 0)) ? max : parseInt((hex.value.row || 0)); }); 
+}
+
+function hasRowA() {
+    return $H(state.map).inject(false, function(acc, hex){ return acc || (hex.value.row === undefined ? 1 : parseInt(hex.value.row)) == 0; });
+}
+
+function adjustForEvenRow(hex) {
+    if (hex.value.col === undefined) {
+        return undefined;
+    }
+    if (~~parseInt(hex.value.row) % 2 === 0) {
+        return hex.value.col; 
+    }
+    return hex.value.col+1; 
 }
