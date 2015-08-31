@@ -7,7 +7,7 @@ use Exporter::Easy (EXPORT => [ 'sms_after_move' ]);
 
 use DB::EditLink;
 use Game::Constants;
-use WWW::Twilio::API;
+use Twilio::API;
 
 my $domain = "http://tella.snerrman.net";
 
@@ -17,7 +17,7 @@ sub notify_by_sms {
 
     return if !$to or !$from or !$body;
 
-    my $twilio = new WWW::Twilio::API( AccountSid => $ENV{"TWILIO_SID"},
+    my $twilio = new Twilio::API( AccountSid => $ENV{"TWILIO_SID"},
                                        AuthToken  => $ENV{"TWILIO_SECRET"}, );
 
     my $response = $twilio->POST('Messages.json',
