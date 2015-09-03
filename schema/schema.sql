@@ -2,11 +2,10 @@ create table player (
   username text primary key,
   password text,
   displayname text,
-  phone text,
-  email_notify_turn boolean default true,
-  email_notify_all_moves boolean default false,
-  email_notify_chat boolean default true,
-  email_notify_game_status boolean default true
+  notify_turn boolean default true,
+  notify_all_moves boolean default false,
+  notify_chat boolean default true,
+  notify_game_status boolean default true 
 );
 create unique index player_username_lowercase_idx on player(lower(username));
 
@@ -17,6 +16,24 @@ create table email (
   validated boolean
 );
 create unique index email_address_lowercase_idx on email(lower(address));
+
+create table notifier (
+  to text unique,
+  player text references player (username) on delete cascade,
+  is_primary boolean default false,
+  validated boolean, 
+  type_name text references notifier_type (username) on delete cascade
+);
+create unique index notifier_to_lowercase_idx on notifier(lower(to));
+create unique index player_notifier_type_idx on notifier(lower(player), type_name); 
+
+create table notifier_type (
+  name text primary key,
+  package text unique,
+  displayname text, 
+  recipient_word text;
+  description text;
+);
 
 create table to_validate (
   token text primary key,

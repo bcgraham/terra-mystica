@@ -9,10 +9,11 @@ function loadOrSaveSettings(save) {
     };
     if (save) {
         form_params['displayname'] = $("displayname").value;
-        form_params['email_notify_turn'] = $("email_notify_turn").checked;
-        form_params['email_notify_all_moves'] = $("email_notify_all_moves").checked;
-        form_params['email_notify_chat'] = $("email_notify_chat").checked;
-        form_params['email_notify_game_status'] = $("email_notify_game_status").checked;
+        form_params['notify_turn'] = $("notify_turn").checked;
+        form_params['notify_all_moves'] = $("notify_all_moves").checked;
+        form_params['notify_chat'] = $("notify_chat").checked;
+        form_params['notify_game_status'] = $("notify_game_status").checked;
+        form_params['notification_method'] = $("notification_method").value;
         try {
             form_params['primary_email'] = $("primary_email").value;
         } catch (e) {
@@ -70,11 +71,27 @@ function renderSettings(state) {
         new Element("a", { "href": "/alias/request/"}).update(
             "Add new address")));
 
-    $("email_notify_turn").checked = state.email_notify_turn;
-    $("email_notify_all_moves").checked = state.email_notify_all_moves;
-    $("email_notify_chat").checked = state.email_notify_chat;
-    $("email_notify_game_status").checked = state.email_notify_game_status;
+    $("notify_turn").checked = state.notify_turn;
+    $("notify_all_moves").checked = state.notify_all_moves;
+    $("notify_chat").checked = state.notify_chat;
+    $("notify_game_status").checked = state.notify_game_status;
 
     $("email").update(newEmailList);
     $("primary-email-container").update(primarySelect);
+
+    var primaryNotifierSelect = new Element("select", {"id": "notification_method"});
+    var option = new Element("option", {"value": "email", "selected": true}).update("Default email");
+    $H(state.notifier).each(function (elem) {
+        var option = new Element("option", {"value": elem.key}).update(elem.value.name);
+        
+        if (elem.value.is_primary) {
+            option.selected = true;
+        }
+
+        primaryNotifierSelect.insert(option);
+    });
+    newNotifierList.insert(new Element("div").update(
+        new Element("a", { "href": "/notifier/request/"}).update(
+            "Add new notifier")));
+
 }

@@ -14,7 +14,7 @@ use DB::Game;
 use DB::IndexGame;
 use DB::SaveGame;
 use DB::UserInfo;
-use Email::Notify;
+use Notify::Notify;
 use Server::Session;
 use tracker;
 

@@ -19,8 +19,7 @@ use DB::Game;
 use DB::IndexGame;
 use DB::SaveGame;
 use DB::Secret;
-use Email::Notify;
-use SMS::Notify;
+use Notify::Notify;
 use Server::Security;
 use Server::Session;
 
@@ -152,7 +151,7 @@ method handle($q) {
 
     if (!@{$res->{error}}) {
         my $factions = $dbh->selectall_arrayref(
-            "select game_role.faction as name, email.address as email, player.phone as phone, player.displayname from game_role left join email on email.player = game_role.faction_player left join player on player.username = game_role.faction_player where game = ? and email.is_primary",
+            "select game_role.faction as name, email.address as email, player.displayname from game_role left join email on email.player = game_role.faction_player left join player on player.username = game_role.faction_player where game = ? and email.is_primary",
             { Slice => {} },
             $read_id);
         for my $faction (@{$factions}) {
@@ -169,7 +168,7 @@ method handle($q) {
             options => $res->{options},
             action_required => $res->{action_required},
         };
-        sms_after_move $dbh, $write_id, $game, $faction_name;
+        notify_after_move $dbh, $write_id, $game, $faction_name;
     }
 
     my $had_error = scalar @{$res->{error}};

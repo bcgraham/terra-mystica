@@ -100,8 +100,10 @@ sub deploy_cgi {
                   DB/UserInfo.pm
                   DB/UserValidate.pm
                   DB/Validation.pm
-                  Email/Notify.pm
-                  SMS/Notify.pm
+                  Notify/Notify.pm
+                  Notify/Settings.pm
+                  Notify/Email.pm
+                  Notify/SMS.pm
                   Game/Constants.pm
                   Game/Factions.pm
                   Game/Factions/Acolytes.pm
@@ -140,6 +142,7 @@ sub deploy_cgi {
                   Server/Logout.pm
                   Server/Map.pm
                   Server/NewGame.pm
+                  Server/Notifier.pm
                   Server/PasswordReset.pm
                   Server/Plan.pm
                   Server/Router.pm
@@ -178,6 +181,7 @@ sub deploy_stc {
                   joingame.js
                   map.js
                   newgame.js
+                  notifier.js
                   ratings.js
                   register.js
                   reset.js
@@ -215,6 +219,7 @@ sub deploy_data {
                   pages/content/map.pl
                   pages/content/mapedit.pl
                   pages/content/newgame.pl
+                  pages/content/notifier.pl
                   pages/content/player.pl
                   pages/content/factioninfo.pl
                   pages/content/ratings.pl

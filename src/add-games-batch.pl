@@ -12,7 +12,7 @@ use DB::Connection;
 use DB::Game;
 use DB::SaveGame;
 use DB::UserValidate;
-use Email::Notify;
+use Notify::Notify;
 
 sub validate {
     my ($dbh, $desc) = @_;

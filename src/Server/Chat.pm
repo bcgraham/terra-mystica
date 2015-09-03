@@ -11,7 +11,7 @@ use Crypt::CBC;
 use DB::Chat;
 use DB::Connection;
 use DB::Secret;
-use Email::Notify;
+use Notify::Notify;
 use Server::Security;
 use Server::Session;
 

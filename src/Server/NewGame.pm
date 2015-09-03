@@ -14,7 +14,7 @@ use DB::Game;
 use DB::SaveGame;
 use DB::UserInfo;
 use DB::UserValidate;
-use Email::Notify;
+use Notify::Notify;
 use Server::Session;
 
 method handle($q) {

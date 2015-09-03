@@ -41,7 +41,6 @@ method request_registration($q, $dbh) {
     my $username = $q->param('username');
     my $email = $q->param('email');
     my $password = $q->param('password1');
-    my $phone = $q->param('phone');
 
     if ($username =~ /([^A-Za-z0-9._-])/) {
         push @error, "Invalid character in username '$1'"
@@ -50,7 +49,6 @@ method request_registration($q, $dbh) {
     if (!@error) {
         my ($username_in_use) = $dbh->selectrow_array("select count(*) from player where lower(username) = lower(?)", {}, $username);
         my ($email_in_use) = $dbh->selectrow_array("select count(*) from email where lower(address) = lower(?)", {}, $email);
-        if ($phone) my ($phone_in_use) = $dbh->selectrow_array("select count(*) from player where phone = ?", {}, $phone);
 
         if ($username_in_use) {
             push @error, "The username is already in use";
@@ -58,10 +56,6 @@ method request_registration($q, $dbh) {
         
         if ($email_in_use) {
             push @error, "The email address is already registered";
-        }
-
-        if ($phone_in_use) {
-            push @error, "The phone number is already in use";
         }
     }
 
@@ -80,11 +74,10 @@ method request_registration($q, $dbh) {
         my $data = {
             username => $username,
             email => $email,
-            phone => $phone,
             hashed_password => $hashed_password
         };
         my $token = insert_to_validate $dbh, $data;
-        $self->register($dbh, $username, $email, $phone, $hashed_password);
+        $self->register($dbh, $username, $email, $hashed_password);
     }
 
     $self->output_json({ error => [@error] });
@@ -112,13 +105,13 @@ method validate_registration($q, $dbh, $suffix) {
     }
 }
 
-method register($dbh, $user, $email, $phone, $hashed_password) {
+method register($dbh, $user, $email, $hashed_password) {
     my ($already_done) = $dbh->selectrow_array("select count(*) from email where lower(address) = lower(?) and player = ?", {}, $email, $user);
 
     if (!$already_done) {
         $dbh->do('begin');
-        $dbh->do('insert into player (username, displayname, phone, password) values (?, ?, ?)', {},
-             $user, $user, $phone, $hashed_password);
+        $dbh->do('insert into player (username, displayname, password) values (?, ?, ?)', {},
+             $user, $user, $hashed_password);
         $dbh->do('insert into email (address, player, validated, is_primary) values (lower(?), ?, ?, true)',
                  {}, $email, $user, 1);
         $dbh->do('commit');
