@@ -118,7 +118,7 @@ method list_notifiers($dbh, $user, $to) {
     my ($notifiers_list) = $dbh->selectall_hashref("select name, displayname, recipient_word from notifier_type;",
                                                   { Slice => {} });
 
-    return $self->output_json($notifiers_list);
+    $self->output_json($notifiers_list);
 }
 
 1;
