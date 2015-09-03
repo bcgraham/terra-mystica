@@ -102,13 +102,13 @@ my %paths = (
     '/settings/' => sub {
         Server::Settings->new()
     },
-    '/notifier/request/' => {
+    '/notifier/request/' => sub {
         Server::Notifier->new({ mode => 'request' })
     },
-    '/notifier/validate/' => {
+    '/notifier/validate/' => sub {
         Server::Notifier->new({ mode => 'validate' })
     },
-    '/notifier/list-available/' => {
+    '/notifier/list-available/' => sub {
         Server::Notifier->new({ mode => 'list-available' })
     },
 

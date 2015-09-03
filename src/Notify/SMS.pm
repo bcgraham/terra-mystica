@@ -57,6 +57,11 @@ sub message_for_new_chat {
     return "($game->{name}) $who_moved said: $moves";
 }
 
+sub message_for_validation {
+    my ($url) = @_;
+    return "To validate, click $url";
+}
+
 sub notify {
     my ($self, $msg) = @_;
     my $from = get_from_number();

@@ -1,5 +1,5 @@
 use strict;
-
+use warnings;
 package Server::Notifier;
 
 use Moose;
@@ -28,7 +28,7 @@ method handle($q, $suffix) {
     } elsif ($mode eq 'request') {
         $self->request_notifier($q, $dbh);
     } elsif ($mode eq 'list-available') {
-        $self->list_notifiers($q, $dbh);
+        $self->list_notifiers($dbh);
     } else {
         die "Unknown mode $mode";
     }
@@ -72,7 +72,7 @@ method request_notifier($q, $dbh) {
 
         my $url = sprintf "%s/app/notifier/validate/%s", $domain, $token;
 
-        my $res = $dbh->selectrow_hashref("select package from notifier where notifier_type = ?", {}, $notifier_type);
+        my $res = $dbh->selectrow_hashref("select package from notifier_type where lower(name) = lower(?)", {}, $notifier_type);
         my $pkg = $res->{package};
         my $notifier = $pkg->new($to); 
         my $msg = $notifier->message_for_validation($url); 
@@ -114,9 +114,10 @@ method add_notifier($dbh, $user, $to, $notifier_type) {
     return $already_done;
 }
 
-method list_notifiers($dbh, $user, $to) {
+method list_notifiers($dbh) {
     my ($notifiers_list) = $dbh->selectall_hashref("select name, displayname, recipient_word from notifier_type;",
-                                                  { Slice => {} });
+                                                   'name',
+                                                   { Slice => {} });
 
     $self->output_json($notifiers_list);
 }
