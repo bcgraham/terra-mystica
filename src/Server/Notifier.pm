@@ -75,8 +75,8 @@ method request_notifier($q, $dbh) {
         my $res = $dbh->selectrow_hashref("select package from notifier where notifier_type = ?", {}, $notifier_type);
         my $pkg = $res->{package};
         my $notifier = $pkg->new($to); 
-        my $msg = $notifier->message_for_validation $url; 
-        $notifier->notify $msg;
+        my $msg = $notifier->message_for_validation($url); 
+        $notifier->notify($msg);
     }
 
     $self->output_json({ error => [@error] });

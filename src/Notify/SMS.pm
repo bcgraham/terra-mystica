@@ -21,18 +21,19 @@ sub new {
 
     my %self = {
         to => $to,
-        from => get_from_number; 
-    }; 
+        from => get_from_number(),
+    };
 
     return \%self; 
 }
 
-method message_for_game_start {
+sub message_for_game_start {
     my ($game) = @_; 
-    return "($game->{name}) Started."; 
+    my $msg = "($game->{name}) Started.";
+    return $msg; 
 }
 
-method message_for_game_end {
+sub message_for_game_end {
     my ($game) = @_; 
     my $i = 0; 
     my $order = join("\n",
@@ -40,27 +41,27 @@ method message_for_game_end {
                      sort { $b->{VP} <=> $a->{VP} }
                      grep { $_->{VP} } values %{$game->{factions}});
 
-    my $body = "($game->{name}) Ended. Top $i were:\n$order";
+    return "($game->{name}) Ended. Top $i were:\n$order";
 }
-method message_for_active {
+sub message_for_active {
     my ($game, $who_moved, $moves, $faction, $link) = @_;
     return "Your turn! $domain$link";
 }
-method message_for_observer {
+sub message_for_observer {
     my ($game, $who_moved, $moves) = @_;
     return "($game->{name}) $who_moved: \n$moves"; 
 }
 
-method message_for_new_chat {
+sub message_for_new_chat {
     my ($game, $who_moved, $moves) = @_;
     return "($game->{name}) $who_moved said: $moves";
 }
 
-method notify {
-    my ($msg) = @_;
-    my $from = get_from_number;
+sub notify {
+    my ($self, $msg) = @_;
+    my $from = get_from_number();
 
-    return if !$to or !$from or !$msg;
+    return if !$self->{to} || !$from || !$msg;
     my $twilio = new Twilio::API(
                                   AccountSid => $ENV{"TWILIO_SID"},
                                   AuthToken  => $ENV{"TWILIO_SECRET"}, 
@@ -68,7 +69,7 @@ method notify {
 
     my $response = $twilio->POST('Messages.json',
                                  From => $from,
-                                 To   => $to,
+                                 To   => $self->{to},
                                  Body => $msg );
     my $content = JSON::from_json($response->{content});
 
@@ -78,8 +79,8 @@ method notify {
 }
 
 sub get_from_number {
-    @numbers = split /:/, $ENV{"TWILIO_NUMBERS"}
-    return @numbers[rand @numbers]
+    my @numbers = split /:/, $ENV{"TWILIO_NUMBERS"};
+    return @numbers[rand @numbers];
 }
 
 1;

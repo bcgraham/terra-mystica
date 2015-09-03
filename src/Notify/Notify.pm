@@ -19,14 +19,14 @@ sub notify_after_move {
         my ($settings, $notifier) = Notify::Settings->new($dbh, $game, $faction, $who_moved);
         next unless $settings->{for_after_move}; 
 
-        my $link = edit_link_for_faction $dbh, $write_id, $faction->{name}
-        my $msg; 
+        my $link = edit_link_for_faction $dbh, $write_id, $faction->{name};
+        my $msg;
 
-        if ($settings->{for_game_end})  $msg = $notifier->message_for_game_end  $game; 
-        if ($settings->{for_my_turn})   $msg = $notifier->message_for_active    $game, $who_moved, $moves, $faction, $link; 
-        if ($settings->{for_all_moves}) $msg = $notifier->message_for_observer  $game, $who_moved, $moves; 
+        $msg = $notifier->message_for_game_end ($game)                                      if ($settings->{for_game_end});
+        $msg = $notifier->message_for_active   ($game, $who_moved, $moves, $faction, $link) if ($settings->{for_my_turn});
+        $msg = $notifier->message_for_observer ($game, $who_moved, $moves)                  if ($settings->{for_all_moves});
         
-        $notifier->notify $msg; 
+        $notifier->notify($msg); 
     }
 }
 
@@ -39,20 +39,20 @@ sub notify_new_chat {
         my ($settings, $notifier) = Notify::Settings->new($dbh, $game, $faction, $who_sent);
         next unless $settings->{for_new_chat}; 
         
-        my $msg = $notifier->message_for_new_chat $game, $who_sent, $message;  
-        $notifier->notify $msg; 
+        my $msg = $notifier->message_for_new_chat($game, $who_sent, $message);  
+        $notifier->notify($msg); 
     }
 }
 
 sub notify_game_started {
     my ($dbh, $game) = @_;
 
-    for my $player (@{$game->{players}}) {
+    for my $faction (@{$game->{players}}) {
         my ($settings, $notifier) = Notify::Settings->new($dbh, $game, $faction);
         next unless $settings->{for_game_start}; 
 
-        my $msg = $notifier->message_for_game_start $game;
-        $notifier->notify $msg; 
+        my $msg = $notifier->message_for_game_start($game);
+        $notifier->notify($msg); 
     }
 }
 

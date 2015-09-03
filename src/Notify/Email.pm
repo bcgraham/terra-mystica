@@ -27,9 +27,9 @@ sub new {
     return \%self; 
 }
 
-method notify {
-    my ($email, $msg) = @_;
-    my ($subject, $body) = @msg; 
+sub notify {
+    my ($self, $email, $msg) = @_;
+    my ($subject, $body) = {$msg}; 
 
     return if !$body or !$subject or !$email;
 
@@ -41,7 +41,7 @@ method notify {
     } else {
         $smtp->data();
         $smtp->datasend("To: $email\n");
-        $smtp->datasend("From: TM Game Notification <noreply+notify-game-$game->{name}\@tella.snerrman.net>\n");
+        $smtp->datasend("From: TM Game Notification <noreply+notify-game-$self->{from}\@tella.snerrman.net>\n");
         $smtp->datasend("Subject: $subject\n");
         $smtp->datasend("\n");
         $smtp->datasend("$body\n");
@@ -51,13 +51,13 @@ method notify {
     $smtp->quit;
 }
 
-method message_for_active {
+sub message_for_active {
     my ($dbh, $write_id, $game, $email, $faction, $who_moved, $moves) = @_;
-    $who_moved = pretty_faction_name $game, $who_moved; 
+    $who_moved = pretty_faction_name($game, $who_moved); 
 
     my $subject = "Terra Mystica PBEM ($game->{name}) - your move";
 
-    my $link = edit_link_for_faction $dbh, $write_id, $faction->{name};
+    my $link = edit_link_for_faction($dbh, $write_id, $faction->{name});
     my $body = "
 It's your turn to move in Terra Mystica game $game->{name}.
 
@@ -81,9 +81,9 @@ your email settings at $domain/settings/
     ($subject, $body);
 }
 
-method message_for_observer {
+sub message_for_observer {
     my ($game, $who_moved, $moves) = @_;
-    $who_moved = pretty_faction_name $game, $who_moved; 
+    $who_moved = pretty_faction_name($game, $who_moved); 
 
     my $subject = "Terra Mystica PBEM ($game->{name})";
     my $body = "
@@ -97,7 +97,7 @@ your email settings at $domain/settings/
     ($subject, $body);
 }
 
-method message_for_new_chat {
+sub message_for_new_chat {
     my ($game, $who_moved, $moves) = @_;
 
     my $subject = "Terra Mystica PBEM ($game->{name})";
@@ -112,7 +112,7 @@ your email settings at $domain/settings/
     ($subject, $body);
 }
 
-method text_for_game_over {
+sub text_for_game_over {
     my ($game, $who_moved) = @_;
     my $order = join("\n",
                      map { "$_->{VP} ".pretty_faction_name($game, $_->{name}) }
@@ -131,7 +131,7 @@ your email settings at $domain/settings/
     ($subject, $body);
 }
 
-method message_for_game_start {
+sub message_for_game_start {
     my ($game) = @_;
 
     my $i = 1;

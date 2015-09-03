@@ -9,7 +9,7 @@ sub new {
 
     my $settings = fetch_notification_settings($dbh, $faction->{email});
 
-    my $acting = action_is_required $game, $faction;
+    my $acting = action_is_required($game, $faction);
     my $own_move = $faction->{name} eq $who; 
     my $en = $game->{options}{'email-notify'}; 
     
@@ -23,13 +23,13 @@ sub new {
 		for_new_chat   => $en && $settings->{notify_chat}                                && !$own_move,
 	};
 
-	%self{for_after_move} = %self{for_game_end} || %self{for_my_turn} || %self{for_all_moves}; 
+	$self{for_after_move} = $self{for_game_end} || $self{for_my_turn} || $self{for_all_moves}; 
     
     my $pkg = $settings->{notification_method} // "Notify::Email"; 
     my $to = $pkg->to_field; 
 
-    my $notifier = $pkg->new $to, $game; 
-    return ($self, $notifier); 
+    my $notifier = $pkg->new($to, $game); 
+    return (\%self, $notifier); 
 }
 
 sub fetch_notification_settings {
@@ -55,3 +55,5 @@ sub action_is_required {
     }
     return 0; 
 }
+
+1;
