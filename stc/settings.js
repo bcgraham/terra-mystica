@@ -79,8 +79,7 @@ function renderSettings(state) {
     $("email").update(newEmailList);
     $("primary-email-container").update(primarySelect);
 
-    var primaryNotifierSelect = new Element("select", {"id": "notification_method"});
-    var option = new Element("option", {"value": "email", "selected": true}).update("Default email");
+    var primaryNotifierSelect = $("notification_method");
     $H(state.notifier).each(function (elem) {
         var option = new Element("option", {"value": elem.key}).update(elem.value.name);
         
