@@ -71,13 +71,13 @@ function loadNotifiers() {
 
 function renderNotifier() {
     var notifier_type = $("notifier_type"); 
-    $("recipient_word").update(notifier_type.readAttribute("data-recipient-word")); 
+    $("recipient_word").update($("notifier_type")[$("notifier_type").selectedIndex].dataset.recipientWord); 
 }
 
 function renderNotifiers(state) {
     var notifier_type = $("notifier_type"); 
-    $H(state.notifier).each(function (elem) {
-        var option = new Element("option", {"value": elem.key, "data-recipient-word": elem.recipient_word}).update(elem.displayname);
+    $H(state).each(function (elem) {
+        var option = new Element("option", {"value": elem.key, "data-recipient-word": elem.value.recipient_word}).update(elem.value.displayname);
         
         if (elem.value.is_primary) {
             option.selected = true;
