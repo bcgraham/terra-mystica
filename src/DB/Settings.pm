@@ -23,8 +23,8 @@ sub fetch_user_settings {
     $res{email} = $rows;
 
     $rows = $dbh->selectall_hashref(
-        "select notifier.to, notifier.validated, notifier.is_primary, notifier_type.name as type, notifier_type.displayname as name from notifier join notifier_type on notifier.type_name=notifier_type.name join player on notifier.player=player.username where player = ?",
-        'to',
+        "select notifier.target, notifier.validated, notifier.is_primary, notifier_type.name as type, notifier_type.displayname as name from notifier join notifier_type on notifier.type_name=notifier_type.name join player on notifier.player=player.username where player = ?",
+        'target',
         { Slice => {} },
         $username);
     $res{notifier} = $rows;

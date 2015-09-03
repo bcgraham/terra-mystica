@@ -25,7 +25,7 @@ sub new {
 
 	%self{for_after_move} = %self{for_game_end} || %self{for_my_turn} || %self{for_all_moves}; 
     
-    my $pkg = $settings->{notification_method}; 
+    my $pkg = $settings->{notification_method} // "Notify::Email"; 
     my $to = $pkg->to_field; 
 
     my $notifier = $pkg->new $to, $game; 
@@ -35,7 +35,7 @@ sub new {
 sub fetch_notification_settings {
     my ($dbh, $email) = @_;
     my $settings = $dbh->selectrow_hashref(
-        "select notify_turn, notify_all_moves, notify_chat, notify_game_status, notification_method from player where username=(select player from email where address=lower(?))",
+        "select notify_turn, notify_all_moves, notify_chat, notify_game_status, package as notification_method from player left join notifier on player.username=notifier.player where username=(select player from email where address=lower(?))",
         {},
         $email);
 

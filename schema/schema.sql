@@ -17,23 +17,23 @@ create table email (
 );
 create unique index email_address_lowercase_idx on email(lower(address));
 
-create table notifier (
-  to text unique,
-  player text references player (username) on delete cascade,
-  is_primary boolean default false,
-  validated boolean, 
-  type_name text references notifier_type (username) on delete cascade
-);
-create unique index notifier_to_lowercase_idx on notifier(lower(to));
-create unique index player_notifier_type_idx on notifier(lower(player), type_name); 
-
 create table notifier_type (
   name text primary key,
   package text unique,
   displayname text, 
-  recipient_word text;
-  description text;
+  recipient_word text,
+  description text
 );
+
+create table notifier (
+  target text unique,
+  player text references player (username) on delete cascade,
+  is_primary boolean default false,
+  validated boolean, 
+  type_name text references notifier_type (name) on delete cascade
+);
+create unique index notifier_to_lowercase_idx on notifier(lower(target));
+create unique index player_notifier_type_idx on notifier(lower(player), type_name); 
 
 create table to_validate (
   token text primary key,

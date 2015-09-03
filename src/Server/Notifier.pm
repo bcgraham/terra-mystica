@@ -49,7 +49,7 @@ method request_notifier($q, $dbh) {
     }
 
     if (!@error) {
-        my ($notifier_in_use) = $dbh->selectrow_array("select count(*) from notifier where lower(to) = lower(?)", {}, $to);
+        my ($notifier_in_use) = $dbh->selectrow_array("select count(*) from notifier where lower(target) = lower(?)", {}, $to);
 
         if ($notifier_in_use) {
             push @error, "The notifier is already registered";
@@ -101,12 +101,12 @@ method validate_notifier($q, $dbh, $suffix) {
 }
 
 method add_notifier($dbh, $user, $to, $notifier_type) {
-    my ($already_done) = $dbh->selectrow_array("select count(*) from notifier where lower(to) = lower(?)", {}, $to);
+    my ($already_done) = $dbh->selectrow_array("select count(*) from notifier where lower(target) = lower(?)", {}, $to);
     my ($is_valid_notifier) = $dbh->selectrow_array("select count(*) from notifier_type where lower(name) = lower(?)", {}, $notifier_type);
 
     if (!$already_done and $is_valid_notifier) {
         $dbh->do('begin');
-        $dbh->do('insert into notifier (to, player, validated, notifier_type, is_primary) values (lower(?), ?, ?, ?, false)',
+        $dbh->do('insert into notifier (target, player, validated, notifier_type, is_primary) values (lower(?), ?, ?, ?, false)',
                  {}, $to, $user, 1, $notifier_type);
         $dbh->do('commit');
     }
