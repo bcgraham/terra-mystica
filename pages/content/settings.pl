@@ -21,11 +21,9 @@ __DATA__
         If you have multiple registered addresses, email notifications will
         be sent to this address.
         <div id="primary-email-container"></div></tr>
-    <tr><td>Notification method</td>
+    <tr><td>Notification method<td>
         You can receive game updates through channels other than email. 
-        <select name="notification_method" id="notification_method" onchange="javascript:newGameValidate()">
-          <option value="email" selected>Primary email</option>
-        </select></tr>
+        <div id="notification_method_div"></div></tr>
     <tr><td>Notifications<td>
         <div>
 For games with email notifications turned on, you'll get 

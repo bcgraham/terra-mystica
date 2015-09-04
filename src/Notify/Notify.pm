@@ -10,6 +10,12 @@ use Exporter::Easy (EXPORT => [ 'notify_after_move',
 use DB::EditLink;
 use Notify::Settings; 
 
+sub deliver {
+    my ($pkg, $to) = @_; 
+    my $notifier = $pkg->new($to); 
+    return $notifier; 
+}
+
 sub notify_after_move {
     my ($dbh, $write_id, $game, $who_moved, $moves) = @_;
     

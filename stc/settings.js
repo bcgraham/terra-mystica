@@ -79,7 +79,8 @@ function renderSettings(state) {
     $("email").update(newEmailList);
     $("primary-email-container").update(primarySelect);
 
-    var primaryNotifierSelect = $("notification_method");
+    var primaryNotifierSelect = new Element("select", {"id": "notification_method"});
+    primaryNotifierSelect.insert(new Element("option", {"value": "email"}).update("Primary email"));
     $H(state.notifier).each(function (elem) {
         var option = new Element("option", {"value": elem.key}).update(elem.value.name);
         
@@ -89,8 +90,6 @@ function renderSettings(state) {
 
         primaryNotifierSelect.insert(option);
     });
-    newNotifierList.insert(new Element("div").update(
-        new Element("a", { "href": "/notifier/request/"}).update(
-            "Add new notifier")));
+    $("notification_method_div").update(primaryNotifierSelect);
 
 }

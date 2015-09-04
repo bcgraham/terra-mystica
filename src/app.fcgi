@@ -2,7 +2,7 @@
 
 cd $(dirname $0)
 if [ "$ENV" = "devel" ]; then
-    EXTRA_WATCH_DIRS="-R /home/jsnell/sites/terra/git/src/"
+    EXTRA_WATCH_DIRS="-R $DOCROOT"
 fi
 
 set -x

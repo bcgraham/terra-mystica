@@ -15,6 +15,8 @@ use Notify::Notify;
 use Server::Security;
 use Server::Session;
 
+my $admin_username = $ENV{ADMIN_USERNAME};
+
 sub verify_key {
     my ($dbh, $id, $faction_key, $faction_name) = @_;
     my ($secret, $iv) = get_secret $dbh;
@@ -53,7 +55,7 @@ sub handle {
     my %res = ( error => [] );
     my $prevalidated = 0;
 
-    if ($faction_name eq '' and $username eq 'jsnell') {
+    if ($faction_name eq '' and $username eq $admin_username) {
         $faction_name = 'site-admin';
         $prevalidated = 1;
     }

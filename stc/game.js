@@ -1882,7 +1882,7 @@ function drawActionRequired() {
         }
 
         if (currentFaction ||
-            (loggedIn() && loggedIn()[1] == "jsnell")) {
+            (loggedIn() && loggedIn()[1] == adminUsername()[1])) {
             var style = "";
             if (newChatMessages()) {
                 style = "color: red"
@@ -3637,7 +3637,7 @@ function updateInfoTab() {
     };
 
     {
-        var url = "http://terra.snellman.net/game/" + TM.params.game;
+        var url = "http://" + document.location.host + "/game/" + TM.params.game;
         addRow("Public Link",
                new Element("a", { href: url }).updateText(url));
     }

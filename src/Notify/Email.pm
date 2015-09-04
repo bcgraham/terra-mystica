@@ -13,7 +13,9 @@ use Exporter::Easy (EXPORT => [ 'notify',
 use Game::Constants;
 use Net::SMTP;
 
-my $domain = "http://terra.snellman.net";
+my $domain = $ENV{DOMAIN} // 'localhost'; 
+my $email_domain = $ENV{EMAIL_DOMAIN} // 'localhost';
+my $smtp_server = $ENV{SMTP_SERVER} // 'localhost'; 
 
 sub new {
     my $to = shift; 
@@ -33,15 +35,15 @@ sub notify {
 
     return if !$body or !$subject or !$email;
 
-    my $smtp = Net::SMTP->new('localhost', ( Debug => 0 ));
+    my $smtp = Net::SMTP->new($smtp_server, ( Debug => 0 ));
 
-    $smtp->mail("www-data\@terra.snellman.net");
+    $smtp->mail("www-data\@$email_domain");
     if (!$smtp->to($email)) {
         print STDERR "Invalid email address $email\n";
     } else {
         $smtp->data();
         $smtp->datasend("To: $email\n");
-        $smtp->datasend("From: TM Game Notification <noreply+notify-game-$self->{from}\@tella.snerrman.net>\n");
+        $smtp->datasend("From: TM Game Notification <noreply+notify-game-$self->{from}\@$email_domain>\n");
         $smtp->datasend("Subject: $subject\n");
         $smtp->datasend("\n");
         $smtp->datasend("$body\n");
@@ -52,7 +54,7 @@ sub notify {
 }
 
 sub message_for_active {
-    my ($dbh, $write_id, $game, $email, $faction, $who_moved, $moves) = @_;
+    my ($self, $dbh, $write_id, $game, $email, $faction, $who_moved, $moves) = @_;
     $who_moved = pretty_faction_name($game, $who_moved); 
 
     my $subject = "Terra Mystica PBEM ($game->{name}) - your move";
@@ -82,7 +84,7 @@ your email settings at $domain/settings/
 }
 
 sub message_for_observer {
-    my ($game, $who_moved, $moves) = @_;
+    my ($self, $game, $who_moved, $moves) = @_;
     $who_moved = pretty_faction_name($game, $who_moved); 
 
     my $subject = "Terra Mystica PBEM ($game->{name})";
@@ -98,7 +100,7 @@ your email settings at $domain/settings/
 }
 
 sub message_for_new_chat {
-    my ($game, $who_moved, $moves) = @_;
+    my ($self, $game, $who_moved, $moves) = @_;
 
     my $subject = "Terra Mystica PBEM ($game->{name})";
     my $body = "
@@ -113,7 +115,7 @@ your email settings at $domain/settings/
 }
 
 sub text_for_game_over {
-    my ($game, $who_moved) = @_;
+    my ($self, $game, $who_moved) = @_;
     my $order = join("\n",
                      map { "$_->{VP} ".pretty_faction_name($game, $_->{name}) }
                      sort { $b->{VP} <=> $a->{VP} }
@@ -132,7 +134,7 @@ your email settings at $domain/settings/
 }
 
 sub message_for_game_start {
-    my ($game) = @_;
+    my ($self, $game) = @_;
 
     my $i = 1;
     my $order = join("\n",
@@ -153,7 +155,7 @@ your email settings at $domain/settings/
 
 sub get_from_email {
     my ($game) = @_; 
-    return "TM Game Notification <noreply+notify-game-$game->{name}\@terra.snellman.net>"; 
+    return "TM Game Notification <noreply+notify-game-$game->{name}\@$domain>"; 
 }
 
 sub pretty_faction_name {

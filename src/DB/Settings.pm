@@ -83,7 +83,7 @@ sub save_user_settings {
                  {},
                  $username);
         if ($notification_method ne "email") {
-            $dbh->do("update notifier set is_primary=true from notifier join notifier_type on notifier.type_name=notifier_type.name where notifier.player=? and to=lower(?)",
+            $dbh->do("update notifier set is_primary=true from notifier_type where notifier.player=? and target=lower(?) and notifier.type_name=notifier_type.name",
                      {},
                      $username,
                      $notification_method);

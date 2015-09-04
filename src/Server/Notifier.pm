@@ -11,6 +11,8 @@ extends 'Server::Server';
 use DB::Connection;
 use DB::Secret;
 use DB::Validation;
+use Notify::Notify;
+use Notify::SMS; 
 use Server::Session;
 use Util::CryptUtil;
 
@@ -74,8 +76,12 @@ method request_notifier($q, $dbh) {
 
         my $res = $dbh->selectrow_hashref("select package from notifier_type where lower(name) = lower(?)", {}, $notifier_type);
         my $pkg = $res->{package};
-        my $notifier = $pkg->new($to); 
+        print STDERR "line 79 $pkg\n"; 
+        my $notifier = Notify::Notify::deliver($pkg, $to); 
+        print STDERR "line 81 $notifier\n"; 
+        print STDERR "line 81 $notifier\n"; 
         my $msg = $notifier->message_for_validation($url); 
+        print STDERR "line 83 $msg\n"; 
         $notifier->notify($msg);
     }
 
@@ -106,7 +112,7 @@ method add_notifier($dbh, $user, $to, $notifier_type) {
 
     if (!$already_done and $is_valid_notifier) {
         $dbh->do('begin');
-        $dbh->do('insert into notifier (target, player, validated, notifier_type, is_primary) values (lower(?), ?, ?, ?, false)',
+        $dbh->do('insert into notifier (target, player, validated, type_name, is_primary) values (lower(?), ?, ?, ?, false)',
                  {}, $to, $user, 1, $notifier_type);
         $dbh->do('commit');
     }

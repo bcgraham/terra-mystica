@@ -11,8 +11,30 @@ my $target = shift;
 
 die "Usage: $0 target\n" if !$target or @ARGV;
 
-die "Directory $target does not exist" if !-d $target;
+if (mkdir $target) {
+  print "Created directory $target\n";
+} elsif (!-d $target) {
+  die "Directory $target does not exist and cannot be created"; 
+}
 
+if (mkdir "logs") {
+  print "Created directory logs/\n";
+} elsif (!-d "logs") {
+  die "Directory logs/ does not exist and cannot be created"; 
+}
+
+if (mkdir "$target/logs") {
+  print "Created directory $target/logs\n";
+} elsif (!-d "$target/logs") {
+  die "Directory $target/logs does not exist and cannot be created"; 
+}
+
+if (mkdir "$target/data/log") {
+  print "Created directory $target/data/log\n";
+} elsif (!-d "$target/data/log") {
+  die "Directory $target/data/log does not exist and cannot be created"; 
+}
+../../data/log
 my $tag = qx(git rev-parse HEAD);
 my $devel = ($target eq 'www-devel');
 
@@ -234,6 +256,7 @@ sub deploy_data {
         copy_with_mode 0444, $f, $to;
     }
 }
+
 
 deploy_docs;
 deploy_stc;

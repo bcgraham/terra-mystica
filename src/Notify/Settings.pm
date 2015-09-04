@@ -5,7 +5,7 @@ use strict;
 package Notify::Settings;
 
 sub new {
-    my ($dbh, $game, $faction, $who) = @_; 
+    my ($caller, $dbh, $game, $faction, $who) = @_; 
 
     my $settings = fetch_notification_settings($dbh, $faction->{email});
 
@@ -15,7 +15,7 @@ sub new {
     
     my $ended = $game->{finished};
 
-    my %self = {
+    my $self = {
 	    for_game_start => $en && $settings->{notify_game_status},
 	    for_game_end   => $en && $settings->{notify_game_status}  &&  $game->{finished},
 		for_my_turn    => $en && $settings->{notify_turn}         && !$game->{finished}  && $acting,
@@ -23,19 +23,19 @@ sub new {
 		for_new_chat   => $en && $settings->{notify_chat}                                && !$own_move,
 	};
 
-	$self{for_after_move} = $self{for_game_end} || $self{for_my_turn} || $self{for_all_moves}; 
-    
+	$self->{for_after_move} = ($self->{for_game_end} || $self->{for_my_turn} || $self->{for_all_moves}); 
+
     my $pkg = $settings->{notification_method} // "Notify::Email"; 
-    my $to = $pkg->to_field; 
+    my $to = $settings->{target} // $faction->{email}; 
 
     my $notifier = $pkg->new($to, $game); 
-    return (\%self, $notifier); 
+    return ($self, $notifier); 
 }
 
 sub fetch_notification_settings {
     my ($dbh, $email) = @_;
     my $settings = $dbh->selectrow_hashref(
-        "select notify_turn, notify_all_moves, notify_chat, notify_game_status, package as notification_method from player left join notifier on player.username=notifier.player where username=(select player from email where address=lower(?))",
+        "select notify_turn, notify_all_moves, notify_chat, notify_game_status, package as notification_method, target from player left join notifier on player.username=notifier.player left join notifier_type on notifier.type_name=notifier.type_name where username=(select player from email where address=lower(?)) and notifier.is_primary=true",
         {},
         $email);
 
@@ -48,7 +48,7 @@ sub action_is_required {
 	my $faction_name = $faction->{name}; 
 
     for (@action_required) {
-    	my $this_faction = $_->{faction} // $_->{player_index}; 
+    	my $this_faction = $_{faction} // $_{player_index}; 
     	if ($this_faction == $faction_name) {
     		return 1; 
     	}

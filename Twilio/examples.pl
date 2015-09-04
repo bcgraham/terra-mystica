@@ -46,21 +46,6 @@ elsif( $action eq 'SMS' ) {
                                  To   => shift @ARGV,
                                  Body => shift @ARGV );
     my $content = JSON::from_json($response->{content});
-    use Data::Dumper; 
-    print Dumper($content);
-    print "\n";
-    my $sid = $content->{sid};
-    my $ec = $content->{error_code};
-    my $em = $content->{error_message};
-    print "$content->{sid} \n";
-    print $content->{error_code}, "\n";
-    print $content->{error_message}, "\n";
-    print !$content->{error_code}, "\n";
-    print !$content->{error_message}, "\n";
-    print "$ec \n";
-    print "$em \n";
-    print !$ec, "\n";
-    print !$em, "\n";
 }
 
 else {

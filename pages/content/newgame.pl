@@ -47,6 +47,7 @@ the letters A-Z and a-z and the digits 0-9.
         </div>
 
         <br>
+        <input name="game-options" type="checkbox" id="option-email-notify" value="email-notify" onchange="javascript:newGameValidate()" checked></input><label id="option-email-notify-label" for="option-email-notify">Automatic email notifications</label><br>
         <input name="game-options" type="checkbox" id="option-maintain-player-order" value="maintain-player-order" onchange="javascript:newGameValidate()"></input><label id="option-maintain-player-order-label" for="option-maintain-player-order">Don't randomize player order (private games only)</label><br>
         
       <td>

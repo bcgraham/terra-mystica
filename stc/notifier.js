@@ -60,8 +60,6 @@ function loadNotifiers() {
             enableDescendants($("notifiers"));
             if (state.link) {
                 document.location = state.link;
-            } else if (state.error.length) {
-                $("error").innerHTML = state.error.join("<br>");
             } else {
                 renderNotifiers(state);
             }

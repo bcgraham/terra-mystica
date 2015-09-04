@@ -26,6 +26,11 @@ sub handle_game {
     #         $_->{vp} += 1;
     #     }
     # }
+    # for (values %{$res->{factions}}) {
+    #     if ($_->{username} and $_->{username} eq 'bcgraham') {
+    #         $_->{vp} += 2;
+    #     }
+    # }
     my @f = sort { $b->{vp} <=> $a->{vp} } values %{$res->{factions}};
     my $r = 0;
     for (@f) {
