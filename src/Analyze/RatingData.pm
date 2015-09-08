@@ -11,7 +11,7 @@ sub handle_game {
     my ($res, $output, $players, $factions) = @_;
 
     my $faction_count = keys %{$res->{factions}};
-    return if $faction_count < 3;
+    return if $faction_count < 2;
 
     my %player_ids = (); 
     for (values %{$res->{factions}}) {

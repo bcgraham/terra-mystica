@@ -76,12 +76,8 @@ method request_notifier($q, $dbh) {
 
         my $res = $dbh->selectrow_hashref("select package from notifier_type where lower(name) = lower(?)", {}, $notifier_type);
         my $pkg = $res->{package};
-        print STDERR "line 79 $pkg\n"; 
         my $notifier = Notify::Notify::deliver($pkg, $to); 
-        print STDERR "line 81 $notifier\n"; 
-        print STDERR "line 81 $notifier\n"; 
         my $msg = $notifier->message_for_validation($url); 
-        print STDERR "line 83 $msg\n"; 
         $notifier->notify($msg);
     }
 

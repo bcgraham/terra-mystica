@@ -45,7 +45,7 @@ sub message_for_game_end {
 }
 sub message_for_active {
     my ($self, $game, $who_moved, $moves, $faction, $link) = @_;
-    return "Your turn! $domain$link";
+    return "($faction->{displayname}) Your turn! $domain$link";
 }
 sub message_for_observer {
     my ($self, $game, $who_moved, $moves) = @_;
@@ -58,7 +58,7 @@ sub message_for_new_chat {
 }
 
 sub message_for_validation {
-    my ($self, $self, $url) = @_;
+    my ($self, $url) = @_;
     return "To validate, click $url";
 }
 
@@ -77,7 +77,7 @@ sub notify {
     my $response = $twilio->POST('Messages.json',
                                  From => $from,
                                  To   => $self->{to},
-                                 Body => $msg );
+                                 Body => "($self->{to}) $msg");
     my $content = JSON::from_json($response->{content});
 
     if ($content->{error_code}) {

@@ -80,11 +80,14 @@ sub make_games {
         }
     }
 
-    my $map_variant = undef;
+    my $base_map = undef;
 
     for my $game_desc (@to_create) {
         $dbh->do("begin");
         my $id = $game_desc->{name};
+        my $map_variant = $game_desc->{map_variant} // $base_map;
+        my $game_admin = "bcgraham"; 
+        my $game_options = $game_desc->{options} // $options; 
         my @players = map {
             my $player = $_;
             my ($username, $email) =
@@ -93,10 +96,9 @@ sub make_games {
         } @{$game_desc->{players}};
 
         print "Creating $id with @{$game_desc->{players}}\n";
-
         create_game($dbh,
                     $id,
-                    $admin,
+                    $game_admin,
                     [ @players ],
                     $player_count,
                     $map_variant,
@@ -110,15 +112,15 @@ sub make_games {
                  $desc->{'maximum-rating'},
                  $desc->{'deadline-hours'} // 120);
 
-        notify_game_started $dbh, {
-            name => $id,
-            options => { map { ($_ => 1) } @{$options} },
-            players => [ values %{get_game_factions($dbh, $id)} ],
-        };
+#        notify_game_started $dbh, {
+#            name => $id,
+#            options => { map { ($_ => 1) } @{$options} },
+#            players => [ values %{get_game_factions($dbh, $id)} ],
+#        };
 
         $dbh->do("commit");
 
-        sleep 1;
+        sleep .1;
     }
 }
 
@@ -126,8 +128,8 @@ sub make_games {
     my $dbh = get_db_connection;
     my $desc = decode_json join '', <>;
 
-    validate $dbh, $desc;
-    print "Validation passed. Really create games [yn]?\n";
+    #validate $dbh, $desc;
+    print "Really create games [yn]?\n";
     my $query = <STDIN>;
     chomp $query;
     if ($query eq 'y') {

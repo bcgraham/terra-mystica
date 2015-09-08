@@ -1045,6 +1045,7 @@ sub command_randomize {
         return;
     }
 
+    $seed =~ s/_//g;
     my $rand = Math::Random::MT->new(unpack "l6", sha1 $seed);
 
     my @score = ();

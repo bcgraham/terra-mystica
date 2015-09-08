@@ -29,12 +29,12 @@ if (mkdir "$target/logs") {
   die "Directory $target/logs does not exist and cannot be created"; 
 }
 
-if (mkdir "$target/data/log") {
+if (mkdir "$target/data" and mkdir "$target/data/log") {
   print "Created directory $target/data/log\n";
 } elsif (!-d "$target/data/log") {
   die "Directory $target/data/log does not exist and cannot be created"; 
 }
-../../data/log
+
 my $tag = qx(git rev-parse HEAD);
 my $devel = ($target eq 'www-devel');
 

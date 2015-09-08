@@ -4,7 +4,7 @@ use warnings;
 
 use lib 'lib';
 use JSON;
-use WWW::Twilio::API;
+use Twilio::API;
 
 ## usage: examples.pl account_sid authtoken action parameters (see examples)
 
@@ -12,7 +12,7 @@ my $account_sid = shift @ARGV;
 my $auth_token  = shift @ARGV;
 my $action      = shift @ARGV || 'Calls';
 
-my $twilio = new WWW::Twilio::API( AccountSid => $account_sid,
+my $twilio = new Twilio::API( AccountSid => $account_sid,
                                    AuthToken  => $auth_token, );
 
 ## view a list of calls in JSON format

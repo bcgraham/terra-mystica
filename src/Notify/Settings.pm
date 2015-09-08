@@ -3,6 +3,7 @@
 use strict;
 
 package Notify::Settings;
+use List::Util qw(any);
 
 sub new {
     my ($caller, $dbh, $game, $faction, $who) = @_; 
@@ -43,17 +44,12 @@ sub fetch_notification_settings {
 }
 
 sub action_is_required {
-	my ($game, $faction) = @_; 
-	my @action_required = $game->{action_required};
-	my $faction_name = $faction->{name}; 
-
-    for (@action_required) {
-    	my $this_faction = $_{faction} // $_{player_index}; 
-    	if ($this_faction == $faction_name) {
-    		return 1; 
-    	}
-    }
-    return 0; 
+    my ($game, $faction) = @_;
+    my $this_faction = $faction->{name};
+    return any {
+        my $required_faction = $_->{faction} // $_->{player_index};
+        $this_faction eq $required_faction
+    } @{$game->{action_required}};
 }
 
 1;
