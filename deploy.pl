@@ -44,13 +44,13 @@ my %untracked = map {
     /^\?/
 } qx(git status --porcelain);
 
-if (!$devel) {
-    system "git", "diff", "--exit-code";
+# if (!$devel) {
+#     system "git", "diff", "--exit-code";
 
-    if ($?) {
-        die "Uncommitted changes, can't deploy";
-    }
-}
+#     if ($?) {
+#         die "Uncommitted changes, can't deploy";
+#     }
+# }
 
 sub copy_with_mode {
     my ($mode, $from, $to) = @_;
