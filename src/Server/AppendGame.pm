@@ -168,7 +168,7 @@ method handle($q) {
             options => $res->{options},
             action_required => $res->{action_required},
         };
-        notify_after_move $dbh, $write_id, $game, $faction_name;
+        notify_after_move $dbh, $write_id, $game, $faction_name, $append;
     }
 
     my $had_error = scalar @{$res->{error}};

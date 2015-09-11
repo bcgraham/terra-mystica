@@ -83,6 +83,7 @@ sub handle {
             for my $option (@{$game_options}) {
                 if ($option eq 'email-notify') {
                     notify_new_chat $dbh, {
+                        options => { 'email-notify' => 1},
                         name => $id,
                         factions => { map { ($_->{name}, $_) } @{$factions} }
                     }, $faction_name, $add_message;
