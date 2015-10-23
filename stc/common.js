@@ -225,6 +225,10 @@ function loggedIn() {
     return document.cookie.match(/session-username=([A-Za-z0-9._-]+)/);
 }
 
+function adminUsername() {
+    return document.cookie.match(/admin-username=([A-Za-z0-9._-]+)/);
+}
+
 function renderSidebar(id) {
     var sidebarSection = function(title, renderer) {
         var sec = new Element("div", {"class": "sidebar-section"});

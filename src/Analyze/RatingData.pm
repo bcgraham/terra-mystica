@@ -11,7 +11,7 @@ sub handle_game {
     my ($res, $output, $players, $factions) = @_;
 
     my $faction_count = keys %{$res->{factions}};
-    return if $faction_count < 3;
+    return if $faction_count < 2;
 
     my %player_ids = (); 
     for (values %{$res->{factions}}) {
@@ -24,6 +24,11 @@ sub handle_game {
     # for (values %{$res->{factions}}) {
     #     if ($_->{username} and $_->{username} eq 'jsnell') {
     #         $_->{vp} += 1;
+    #     }
+    # }
+    # for (values %{$res->{factions}}) {
+    #     if ($_->{username} and $_->{username} eq 'bcgraham') {
+    #         $_->{vp} += 2;
     #     }
     # }
     my @f = sort { $b->{vp} <=> $a->{vp} } values %{$res->{factions}};

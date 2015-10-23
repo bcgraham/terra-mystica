@@ -12,6 +12,7 @@ method handle($q) {
     $self->no_cache();
     $self->set_header("Set-Cookie", "csrf-token=; Path=/");
     $self->set_header("Set-Cookie", "session-username=; Path=/");
+    $self->set_header("Set-Cookie", "admin-username=; Path=/;");
     $self->set_header("Set-Cookie", "session-token=; Path=/; HttpOnly");
     $self->redirect("/");
 }

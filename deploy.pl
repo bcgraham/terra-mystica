@@ -11,7 +11,37 @@ my $target = shift;
 
 die "Usage: $0 target\n" if !$target or @ARGV;
 
-die "Directory $target does not exist" if !-d $target;
+if (mkdir $target) {
+  print "Created directory $target\n";
+} elsif (!-d $target) {
+  die "Directory $target does not exist and cannot be created"; 
+}
+
+if (mkdir "logs") {
+  print "Created directory logs/\n";
+} elsif (!-d "logs") {
+  die "Directory logs/ does not exist and cannot be created"; 
+}
+
+if (mkdir "data" and mkdir "data/log") {
+  print "Created directory data/log/\n";
+  my ($login,$pass,$uid,$gid) = getpwnam("daemon");
+  chown $uid, $gid, "data/log";
+} elsif (!-d "data/log") {
+  die "Directory logs/ does not exist and cannot be created"; 
+}
+
+if (mkdir "$target/logs") {
+  print "Created directory $target/logs\n";
+} elsif (!-d "$target/logs") {
+  die "Directory $target/logs does not exist and cannot be created"; 
+}
+
+if (mkdir "$target/data" and mkdir "$target/data/log") {
+  print "Created directory $target/data/log\n";
+} elsif (!-d "$target/data/log") {
+  die "Directory $target/data/log does not exist and cannot be created"; 
+}
 
 my $tag = qx(git rev-parse HEAD);
 my $devel = ($target eq 'www-devel');
@@ -22,13 +52,13 @@ my %untracked = map {
     /^\?/
 } qx(git status --porcelain);
 
-if (!$devel) {
-    system "git", "diff", "--exit-code";
+# if (!$devel) {
+#     system "git", "diff", "--exit-code";
 
-    if ($?) {
-        die "Uncommitted changes, can't deploy";
-    }
-}
+#     if ($?) {
+#         die "Uncommitted changes, can't deploy";
+#     }
+# }
 
 sub copy_with_mode {
     my ($mode, $from, $to) = @_;
@@ -100,8 +130,10 @@ sub deploy_cgi {
                   DB/UserInfo.pm
                   DB/UserValidate.pm
                   DB/Validation.pm
-                  Email/Notify.pm
-                  SMS/Notify.pm
+                  Notify/Notify.pm
+                  Notify/Settings.pm
+                  Notify/Email.pm
+                  Notify/SMS.pm
                   Game/Constants.pm
                   Game/Factions.pm
                   Game/Factions/Acolytes.pm
@@ -140,6 +172,7 @@ sub deploy_cgi {
                   Server/Logout.pm
                   Server/Map.pm
                   Server/NewGame.pm
+                  Server/Notifier.pm
                   Server/PasswordReset.pm
                   Server/Plan.pm
                   Server/Router.pm
@@ -178,6 +211,7 @@ sub deploy_stc {
                   joingame.js
                   map.js
                   newgame.js
+                  notifier.js
                   ratings.js
                   register.js
                   reset.js
@@ -215,6 +249,7 @@ sub deploy_data {
                   pages/content/map.pl
                   pages/content/mapedit.pl
                   pages/content/newgame.pl
+                  pages/content/notifier.pl
                   pages/content/player.pl
                   pages/content/factioninfo.pl
                   pages/content/ratings.pl
@@ -229,6 +264,7 @@ sub deploy_data {
         copy_with_mode 0444, $f, $to;
     }
 }
+
 
 deploy_docs;
 deploy_stc;

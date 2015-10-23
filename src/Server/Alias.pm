@@ -18,6 +18,10 @@ use Util::CryptUtil;
 
 has 'mode' => (is => 'ro', required => 1);
 
+my $domain = $ENV{DOMAIN} // 'localhost'; 
+my $email_domain = $ENV{EMAIL_DOMAIN} // 'localhost';
+my $smtp_server = $ENV{SMTP_SERVER} // 'localhost'; 
+
 method handle($q, $suffix) {
     $self->no_cache();
     my $dbh = get_db_connection;
@@ -60,17 +64,17 @@ method request_alias($q, $dbh) {
         };
         my $token = insert_to_validate $dbh, $data;
 
-        my $url = sprintf "http://terra.snellman.net/app/alias/validate/%s", $token;
+        my $url = sprintf "http://$domain/app/alias/validate/%s", $token;
 
-        my $smtp = Net::SMTP->new('localhost', ( Debug => 0 ));
+        my $smtp = Net::SMTP->new($smtp_server, ( Debug => 0 ));
 
-        $smtp->mail("www-data\@terra.snellman.net");
+        $smtp->mail("www-data\@$email_domain");
         if (!$smtp->to($email)) {
             push @error, "Invalid email address";
         } else {
             $smtp->data();
             $smtp->datasend("To: $email\n");
-            $smtp->datasend("From: noreply+alias\@terra.snellman.net\n");
+            $smtp->datasend("From: noreply+alias\@$email_domain\n");
             $smtp->datasend("Subject: Email alias validation for Terra Mystica\n");
             $smtp->datasend("\n");
             $smtp->datasend("To validate this email as an alias, use the following link:\n");

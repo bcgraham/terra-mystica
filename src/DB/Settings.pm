@@ -10,7 +10,7 @@ sub fetch_user_settings {
     my %res = ();
 
     my $player = $dbh->selectrow_hashref(
-        "select username, displayname, email_notify_turn, email_notify_all_moves, email_notify_chat, email_notify_game_status from player where username = ?",
+        "select username, displayname, notify_turn, notify_all_moves, notify_chat, notify_game_status from player where username = ?",
         {},
         $username);
     $res{$_} = $player->{$_} for keys %{$player};
@@ -22,6 +22,13 @@ sub fetch_user_settings {
         $username);
     $res{email} = $rows;
 
+    $rows = $dbh->selectall_hashref(
+        "select notifier.target, notifier.validated, notifier.is_primary, notifier_type.name as type, notifier_type.displayname as name from notifier join notifier_type on notifier.type_name=notifier_type.name join player on notifier.player=player.username where player = ?",
+        'target',
+        { Slice => {} },
+        $username);
+    $res{notifier} = $rows;
+
     \%res;
 }
 
@@ -30,6 +37,7 @@ sub save_user_settings {
 
     my $displayname = $q->param('displayname');
     my $primary_email = $q->param('primary_email');
+    my $notification_method = $q->param('notification_method');
 
     if (length $displayname > 30) {
         die "Display Name too long";
@@ -37,13 +45,13 @@ sub save_user_settings {
 
     $dbh->do("begin");
 
-    $dbh->do("update player set displayname=?, email_notify_turn=?, email_notify_all_moves=?, email_notify_chat=?, email_notify_game_status=? where username=?",
+    $dbh->do("update player set displayname=?, notify_turn=?, notify_all_moves=?, notify_chat=?, notify_game_status=? where username=?",
              {},
              $displayname,
-             scalar $q->param('email_notify_turn'),
-             scalar $q->param('email_notify_all_moves'),
-             scalar $q->param('email_notify_chat'),
-             scalar $q->param('email_notify_game_status'),
+             scalar $q->param('notify_turn'),
+             scalar $q->param('notify_all_moves'),
+             scalar $q->param('notify_chat'),
+             scalar $q->param('notify_game_status'),
              $username);
 
     if ($primary_email) {
@@ -68,6 +76,18 @@ sub save_user_settings {
                  {},
                  $primary_email,
                  $username);
+    }
+
+    if ($notification_method) {
+        $dbh->do("update notifier set is_primary=false where player=?",
+                 {},
+                 $username);
+        if ($notification_method ne "email") {
+            $dbh->do("update notifier set is_primary=true from notifier_type where notifier.player=? and target=lower(?) and notifier.type_name=notifier_type.name",
+                     {},
+                     $username,
+                     $notification_method);
+        }
     }
 
     $dbh->do("commit");

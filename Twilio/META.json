@@ -32,7 +32,6 @@
       },
       "runtime" : {
          "requires" : {
-            "Crypt::SSLeay" : "0.51",
             "LWP::UserAgent" : "2.03",
             "URI::Escape" : "3.28"
          }

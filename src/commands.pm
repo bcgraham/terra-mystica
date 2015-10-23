@@ -1045,6 +1045,7 @@ sub command_randomize {
         return;
     }
 
+    $seed =~ s/_//g;
     my $rand = Math::Random::MT->new(unpack "l6", sha1 $seed);
 
     my @score = ();
@@ -1100,7 +1101,9 @@ sub command_start_planning {
     $game{planning} = 1;
     $faction->{planning} = 1;
     if ($faction->{passed}) {
-        if (!$faction->{income_taken}) {
+        if ($faction->{income_taken} == 1) {
+            command_income undef, 'other';
+        } elsif ($faction->{income_taken} == 0) {
             command_income;
         }
         command_start;
@@ -1384,6 +1387,7 @@ sub command {
                 die "$wanted_color is not available\n";
             }
         }
+        $game{events}->faction_event($faction, "pick-color:$wanted_color", 1);
         delete $faction->{PICK_COLOR};
         my $field = ($faction->{pick_color_field} // 'secondary_color');
         my $orig = $faction->{$field};

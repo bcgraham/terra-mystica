@@ -11,6 +11,7 @@ use Server::Login;
 use Server::Logout;
 use Server::Map;
 use Server::NewGame;
+use Server::Notifier;
 use Server::PasswordReset;
 use Server::Plan;
 use Server::Register;
@@ -100,6 +101,15 @@ my %paths = (
     },
     '/settings/' => sub {
         Server::Settings->new()
+    },
+    '/notifier/request/' => sub {
+        Server::Notifier->new({ mode => 'request' })
+    },
+    '/notifier/validate/' => sub {
+        Server::Notifier->new({ mode => 'validate' })
+    },
+    '/notifier/list-available/' => sub {
+        Server::Notifier->new({ mode => 'list-available' })
     },
 
     # User information

@@ -11,9 +11,11 @@ use Crypt::CBC;
 use DB::Chat;
 use DB::Connection;
 use DB::Secret;
-use Email::Notify;
+use Notify::Notify;
 use Server::Security;
 use Server::Session;
+
+my $admin_username = $ENV{ADMIN_USERNAME};
 
 sub verify_key {
     my ($dbh, $id, $faction_key, $faction_name) = @_;
@@ -53,7 +55,7 @@ sub handle {
     my %res = ( error => [] );
     my $prevalidated = 0;
 
-    if ($faction_name eq '' and $username eq 'jsnell') {
+    if ($faction_name eq '' and $username eq $admin_username) {
         $faction_name = 'site-admin';
         $prevalidated = 1;
     }
@@ -81,6 +83,7 @@ sub handle {
             for my $option (@{$game_options}) {
                 if ($option eq 'email-notify') {
                     notify_new_chat $dbh, {
+                        options => { 'email-notify' => 1},
                         name => $id,
                         factions => { map { ($_->{name}, $_) } @{$factions} }
                     }, $faction_name, $add_message;
@@ -116,3 +119,5 @@ sub handle {
 
     $self->output_json(\%res);
 }
+
+1;

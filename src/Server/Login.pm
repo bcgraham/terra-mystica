@@ -17,6 +17,8 @@ use Util::CryptUtil;
 use Util::PasswordQuality;
 use Util::ServerUtil;
 
+my $admin_username = $ENV{ADMIN_USERNAME};
+
 method handle($q) {
     my $form_username = $q->param('username');
     my $password = $q->param('password');
@@ -50,6 +52,7 @@ method handle($q) {
         $self->set_header("Set-Cookie", "csrf-token=; Path=/");
         $self->set_header("Set-Cookie", "session-username=; Path=/");
         $self->set_header("Set-Cookie", "session-token=; Path=/; HttpOnly");
+        $self->set_header("Set-Cookie", "admin-username=; Path=/");
         $self->redirect("/forcedreset/");
         log_with_request $q, "login: forced password reset for $form_username"
     } elsif ($match) {
@@ -60,11 +63,14 @@ method handle($q) {
                           "session-username=$username; Path=/; Max-Age=$y");
         $self->set_header("Set-Cookie",
                           "session-token=$token; Path=/; HttpOnly; Max-Age=$y");
+        $self->set_header("Set-Cookie",
+                          "admin-username=$admin_username; Path=/; Max-Age=$y");
         $self->redirect("/");
     } else {
         $self->set_header("Set-Cookie", "csrf-token=; Path=/");
         $self->set_header("Set-Cookie", "session-username=; Path=/");
         $self->set_header("Set-Cookie", "session-token=; Path=/; HttpOnly");
+        $self->set_header("Set-Cookie", "admin-username=; Path=/");
         if ($invalid_user) {
             $self->redirect("/login/#invalid-user");
         } else {

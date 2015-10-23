@@ -1,5 +1,5 @@
 use Test::More tests => 1;
-BEGIN { use_ok('WWW::Twilio::API') };
+BEGIN { use_ok('Twilio::API') };
 
 #########################
 

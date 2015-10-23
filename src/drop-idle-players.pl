@@ -11,7 +11,7 @@ BEGIN { push @INC, dirname $0 }
 use DB::Connection;
 use DB::Game;
 use DB::SaveGame;
-use Email::Notify;
+use Notify::Notify;
 use tracker;
 
 my $dbh = get_db_connection;

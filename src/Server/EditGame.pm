@@ -19,6 +19,8 @@ use Server::Session;
 
 has 'mode' => (is => 'ro', required => 1);
 
+my $admin_username = $ENV{ADMIN_USERNAME};
+
 method handle($q) {
     $self->no_cache();
 
@@ -62,7 +64,7 @@ method check_user_is_admin($dbh, $read_id, $username) {
                                              $read_id);
 
     if ($username ne $game_admin and
-        $username ne 'jsnell') {
+        $username ne $admin_username) {
         die "Sorry, it appears you're not the game admin.\n"
     }
 }
@@ -92,7 +94,7 @@ method edit_content($dbh, $q, $read_id, $write_id, $username) {
     };
 
     # Development hack
-    if ($username eq 'jsnell') {
+    if ($username eq $admin_username) {
         for my $faction (values %{$res->{factions}}) {
             $faction->{edit_link} = edit_link_for_faction $dbh, $write_id, $faction->{name};
         }
