@@ -119,3 +119,5 @@ sub handle {
 
     $self->output_json(\%res);
 }
+
+1;

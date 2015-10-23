@@ -45,7 +45,7 @@ sub message_for_game_end {
 }
 sub message_for_active {
     my ($self, $game, $who_moved, $moves, $faction, $link) = @_;
-    return "($faction->{displayname}) Your turn! $domain$link";
+    return "($game->{name}) Your turn! $domain$link";
 }
 sub message_for_observer {
     my ($self, $game, $who_moved, $moves) = @_;
@@ -77,7 +77,7 @@ sub notify {
     my $response = $twilio->POST('Messages.json',
                                  From => $from,
                                  To   => $self->{to},
-                                 Body => "($self->{to}) $msg");
+                                 Body => $msg);
     my $content = JSON::from_json($response->{content});
 
     if ($content->{error_code}) {
@@ -88,6 +88,20 @@ sub notify {
 sub get_from_number {
     my @numbers = split /:/, $ENV{"TWILIO_NUMBERS"};
     return @numbers[rand @numbers];
+}
+
+sub pretty_faction_name {
+    my ($game, $faction) = @_;
+    my $faction_pretty = $faction;
+    if (exists $faction_setups{$faction}) {
+        $faction_pretty = $faction_setups{$faction}{display};
+    }
+    my $displayname = $game->{factions}{$faction}{displayname};
+    if (defined $displayname) {
+        $faction_pretty .= " ($displayname)";
+    }
+
+    $faction_pretty;
 }
 
 1;

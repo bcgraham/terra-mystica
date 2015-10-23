@@ -23,6 +23,14 @@ if (mkdir "logs") {
   die "Directory logs/ does not exist and cannot be created"; 
 }
 
+if (mkdir "data" and mkdir "data/log") {
+  print "Created directory data/log/\n";
+  my ($login,$pass,$uid,$gid) = getpwnam("daemon");
+  chown $uid, $gid, "data/log";
+} elsif (!-d "data/log") {
+  die "Directory logs/ does not exist and cannot be created"; 
+}
+
 if (mkdir "$target/logs") {
   print "Created directory $target/logs\n";
 } elsif (!-d "$target/logs") {

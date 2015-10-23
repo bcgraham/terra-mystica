@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 /usr/local/apache2/bin/httpd -d /terra-mystica/www-devel -f /terra-mystica/config/apache.conf -k stop
 cd / 
