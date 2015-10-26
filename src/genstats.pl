@@ -15,7 +15,7 @@ BEGIN { push @INC, "$ENV{PWD}/src/"; }
 use DB::Connection;
 use DB::Game;
 
-my $ratings = decode_json read_file "www-prod/data/ratings.json";
+my $ratings = decode_json read_file "www-docker/data/ratings.json";
 my $player_ratings = $ratings->{players};
 
 sub print_json {
