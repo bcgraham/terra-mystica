@@ -313,6 +313,7 @@ sub command_send {
             $spot->{building} = 'P';
             $spot->{color} = $faction->{color};
             $faction->{MAX_P}--;
+            $faction->{CULT_P}++;
             last;
         }
     }
@@ -336,6 +337,7 @@ sub command_convert {
     my %exchange_rates = ();
 
     if (!$game{options}->{'loose-convert-phase'} and
+        !$faction->{planning} and
         $game{acting}->state() ne 'play') {
         die "Can't convert resources outside of actions\n";
     }
@@ -1048,10 +1050,11 @@ sub command_randomize {
     $seed =~ s/_//g;
     my $rand = Math::Random::MT->new(unpack "l6", sha1 $seed);
 
+    my @score_tiles = sort { natural_cmp $a, $b } keys %{$game{score_pool}};
     my @score = ();
     do {
-        @score = mt_shuffle $rand, map { "Score$_" } 1..8;
-    } until $score[4] ne "Score1" and $score[5] ne "Score1";
+        @score = mt_shuffle $rand, @score_tiles;
+    } until $score[4] ne "SCORE1" and $score[5] ne "SCORE1";
     handle_row_internal "", "score ".(join ",", @score[0..5]);
 
     my @bon = mt_shuffle $rand, sort grep {
@@ -1101,6 +1104,9 @@ sub command_start_planning {
     $game{planning} = 1;
     $faction->{planning} = 1;
     if ($faction->{passed}) {
+        if ($game{round} == 6) {
+            return;
+        }
         if ($faction->{income_taken} == 1) {
             command_income undef, 'other';
         } elsif ($faction->{income_taken} == 0) {
@@ -1133,7 +1139,7 @@ sub full_action_required {
 sub finalize_setup {
     maybe_setup_pool;
 
-    for my $type (qw(ice volcano variable variable_v2 variable_v3 variable_v4)) {
+    for my $type (qw(ice volcano variable variable_v2 variable_v3 variable_v4 variable_v5)) {
         if ($game{options}{"fire-and-ice-factions/$type"}) {
             add_faction_variant "final_$type";
         }
@@ -1309,6 +1315,7 @@ sub command {
             errata-cultist-power
             mini-expansion-1
             shipping-bonus
+            temple-scoring-tile
             fire-and-ice-final-scoring
             fire-and-ice-factions
             fire-and-ice-factions/ice
@@ -1316,6 +1323,7 @@ sub command {
             fire-and-ice-factions/variable_v2
             fire-and-ice-factions/variable_v3
             fire-and-ice-factions/variable_v4
+            fire-and-ice-factions/variable_v5
             fire-and-ice-factions/volcano
             email-notify
             loose-adjust-resource

@@ -52,7 +52,72 @@ method handle($q) {
                 push @rows, (map { "$preview_faction: $_" } grep { /\S/ } split /\n/, $preview);
             }
         } else {
-            push @rows, (map { "$preview_faction: $_" } split /\n/, $preview);
+            my $plan_faction = $preview_faction;
+            # For each nesting level: 0 if we're in a true branch,
+            # 1 if we're in a false branch, 2 if we've already executed
+            # the true branch and are in an else or elsif that should
+            # not be executed.
+            my @if_state = ();
+            # Start from -1 to account for the hidden start-planning
+            # inserted by JS before posting the request.
+            my $row = -1;
+            eval {
+                for (split /\n\r*/, $preview) {
+                    ++$row;
+                    s/\s*$//;
+                    if (/^!if\s*(true|false)\s*$/) {                    
+                        push @if_state, ($1 eq 'false' ? 1 : 0);
+                    } elsif (/^!else\s*$/) {
+                        if (!@if_state) {
+                            die "!else with no matching !if\n";
+                        }
+                        if ($if_state[-1] == 0) {
+                            $if_state[-1] = 2;
+                        } elsif ($if_state[-1] == 1) { 
+                            $if_state[-1] = 0;
+                        }
+                    } elsif (/^!elsif\s*(true|false)\s*$/) {
+                        if (!@if_state) {
+                            die "!elsif with no matching !if\n";
+                        }
+                        if ($if_state[-1] == 0) {
+                            # Going from a true branch to an else
+                            $if_state[-1] = 2;
+                        } elsif ($if_state[-1] == 2) {
+                            # We've already seen the true branch in
+                            # the past.
+                        } else {
+                            # All previously seen conditionals were false.
+                            # We might execute this branch.
+                            if ($1 eq 'true')  {
+                                $if_state[-1] = 0;
+                            }
+                        }
+                    } elsif (/^!endif$/) {
+                        if (!@if_state < 0) {
+                            die "!endif with no matching !if\n";
+                        }
+                        pop @if_state;
+                    } elsif (/^!plan (\w+)$/i) {
+                        $plan_faction = $1;
+                        push @rows, "$plan_faction: start_planning";
+                    } elsif (/^!/) {
+                        die "unknown planning command '$_'\n";
+                    } elsif (grep { $_ } @if_state) {
+                        # Inside at least one false branch
+                    } else {
+                        push @rows, "$plan_faction: $_";
+                    }
+                }
+                if (@if_state) {
+                    die join '', "At end of input, but still have an unclosed !if";
+                }
+            }; if ($@) {
+                $self->status(400);
+                $self->output_json({
+                    error => [ "Error on line $row: $@" ]});
+                return;
+            }
         }
     }
 

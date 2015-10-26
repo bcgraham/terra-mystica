@@ -35,14 +35,14 @@ the letters A-Z and a-z and the digits 0-9.
       <td>
         <input name="game-options" type="checkbox" id="option-mini-expansion-1" value="mini-expansion-1"></input><label for="option-mini-expansion-1">Mini Expansion #1 (town tiles)</label><br>
         <input name="game-options" type="checkbox" id="option-shipping-bonus" value="shipping-bonus"></input><label for="option-shipping-bonus">Shipping bonus tile (Spielbox 6/2013)</label><br>
+        <input name="game-options" type="checkbox" id="option-temple-scoring-tile" value="temple-scoring-tile"></input><label for="option-temple-scoring-tile">Temple round scoring tile (2015 mini expansion)</label><br>
         <input name="game-options" type="checkbox" id="option-fire-and-ice-final-scoring" value="fire-and-ice-final-scoring"></input><label for="option-fire-and-ice-final-scoring">Extra final scoring tile (Fire &amp; Ice expansion)</label><br>
         <input name="game-options" type="checkbox" id="option-variable-turn-order" value="variable-turn-order"></input><label for="option-variable-turn-order">Turn order determined by passing order (Fire &amp; Ice expansion)</label><br>
 
         <input type="checkbox" id="option-fire-and-ice-factions" onchange="javascript:newGameValidate()"></input><label for="option-fire-and-ice-factions">Fire &amp; Ice expansion factions</label><br>
         <div style="padding-left: 2em">
           <input name="game-options" type="checkbox" id="option-fire-and-ice-factions/ice" onchange="javascript:newGameValidate()" value="fire-and-ice-factions/ice" checked></input><label for="option-fire-and-ice-factions/ice">Ice factions</label><br>
-          <input name="game-options" type="checkbox" id="option-fire-and-ice-factions/variable" onchange="javascript:newGameValidate()" value="fire-and-ice-factions/variable"></input><label for="option-fire-and-ice-factions/variable" id="label-option-fire-and-ice-factions/variable">Variable factions (original)</label><br>
-          <input name="game-options" type="checkbox" id="option-fire-and-ice-factions/variable_v4" onchange="javascript:newGameValidate()" value="fire-and-ice-factions/variable_v4" checked></input><label for="option-fire-and-ice-factions/variable_v4">Variable factions (<a href='/factioninfo/'>playtest</a> v4)</label><br>
+          <input name="game-options" type="checkbox" id="option-fire-and-ice-factions/variable_v5" onchange="javascript:newGameValidate()" value="fire-and-ice-factions/variable_v5" checked></input><label for="option-fire-and-ice-factions/variable_v5">Variable factions (please note the <a href='https://boardgamegeek.com/thread/1456706/official-change-rules'>official rules change</a>)</label><br>
           <input name="game-options" type="checkbox" id="option-fire-and-ice-factions/volcano" onchange="javascript:newGameValidate()" value="fire-and-ice-factions/volcano" checked></input><label for="option-fire-and-ice-factions/volcano">Volcano factions</label><br>
         </div>
 

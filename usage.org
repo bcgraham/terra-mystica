@@ -30,7 +30,7 @@ by contacting me directly.
 
 * Playing the Game
 
-# <<join-game>
+<<join-game>>
 ** Joining a Game
 
 To join an open public game, go to [[/joingame/][list of open games]], and click the
@@ -135,7 +135,7 @@ elements in this order:
 Click on =show history= to switch the game view to what it was during
 that point in the game.
 
-#<<gameplay-commands>>
+<<gameplay-commands>>
 ** Gameplay Commands
 
 The following commands are available during gameplay. They can be entered
@@ -315,6 +315,57 @@ Example:
 Ignore the remainder of the line. Useful mostly in the planning tool --
 you can use comments to interleave notes to yourself and actual commands.
 
+<<planning-commands>>
+** Planning commands
+
+Planning commands are used to control the behavior of the planning tool.
+They always start with an exclamation mark (=!=), and must be the only
+command on that row.
+
+*** =!plan= /faction/
+
+Switch to another faction. All later commands in the plan will be
+executed by this faction, until the next =!plan= is encountered and
+switches the faction again.
+
+*** =!if= /value/, =!elsif= /value/, =!endif=
+
+Selectively execute the commands between the =!if= and the matching
+=!endif=, depending on whether /value/ is =true= or =false=. The
+contents of a =!elsif= or =!else= will not be executed if one of
+the earlier sibling =!if= or =!elsif= commands was true.
+
+Example:
+
+#+BEGIN_EXAMPLE
+!if false
+  this will not be executed
+  (value was false)
+!elsif true
+  this will be executed
+  (value was true)
+!else
+  this will not be executed
+  (already executed an earlier block).
+!endif
+#+END_EXAMPLE
+
+=!if= blocks can also be nested:
+
+#+BEGIN_EXAMPLE
+!if true
+  this will be executed
+  !if false
+    this will not be executed
+  !else
+    this will be executed
+  !endif
+  this will be executed
+!else
+  this will not be executed
+!endif
+#+END_EXAMPLE
+
 * Running Games
 
 ** Making a New Game
@@ -349,12 +400,12 @@ Note that the administrator rights only apply to the game itself. Most
 importantly the admin can't read the planning notes of other players.
 
 
-#<<admin-commands>>
+<<admin-commands>>
 ** Administrative commands
 
 The following commands are available for changing the state of the game.
 
-# <<options>>
+<<options>>
 *** =option= /option/
 
 Example:
@@ -367,6 +418,7 @@ faction selection. The following options are available:
 
 - =mini-expansion-1=: First mini-expansion, 4 town tiles
 - =shipping-bonus=: Additional bonus tile from Spielbox 6/2013, http://boardgamegeek.com/image/1843355/terra-mystica-navigation-round-bonus-tile
+- =temple-scoring-tile=: Additional round scoring tile, producing points for building temples.
 - =variable-turn-order=: The order in which players pass determines the turn order for the next round.
 - =fire-and-ice-final-scoring=: One more final scoring category will be randomly selected from the 4 alternatives included in the Fire & Ice expansion.
 - =fire-and-ice-faction/xxx=: Where xxx is one of "ice", "variable" or "volcano". Makes the two factions of that type from the Fire & Ice expansion available
@@ -381,7 +433,7 @@ All games will be automatically aborted after 2 weeks of inactivity.
 Changes made in the admin view don't extend the lifespan of the game,
 only moves made directly by players.
 
-# <<drop>>
+<<drop>>
 
 Players who become inactive are dropped from the game after a timeout
 specified during game creation (from 12 hours to two weeks). They can
@@ -444,11 +496,20 @@ the cult tracks he doesn't want to advance to 10 on (for example
 =-WATER=). Note that you should do this adjustment first, doing it
 after taking the town tile will unjustly award 3 power to the player.
 
+** Planner
 
+The planning tool mostly enforces the rules as the normal game. There
+are two major exceptions:
 
+- Mixing BON4 (temporary shipping) and spades received as cult income
+  in phase III. BON4 only has an effect in phase II. The planner does
+  not enforce use of the spade already in the cult income phase, and
+  instead delays it phase II of the following round. As a result, plans
+  that try to use the extra shipping range to transform an otherwise
+  unreachable hex will work in the planner but fail in reality.
+- The payment for Acolyte volcanos is not enforced in the planner.
 
-
-# <<keyboard-shortcuts>>
+<<keyboard-shortcuts>>
 * Keyboard shortcuts
 
 The application has a small number of keyboard shortcuts defined for
